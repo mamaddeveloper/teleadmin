@@ -1,2 +1,5 @@
 updates_log
 token
+
+*.pyc
+
