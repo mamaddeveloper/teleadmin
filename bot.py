@@ -42,9 +42,15 @@ class Bot:
         listUpdates = []
         for update in r["result"]:
             listUpdates.append(Update(update))
+            print update
         sorted(listUpdates, key= lambda x: x.update_id)
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id+1
+        for update in listUpdates:
+            self.answerToMessage("PLS REMOVE THIS LINE§§", update.message)
+        
+    def answerToMessage(self, text, message):
+        r = self.getJson("sendMessage", chat_id=message.chat["id"], text=text, disable_web_page_preview="true")
         
     def getJson(self, requestName, **parameters):
         requestString = Bot.REQUEST_BASE+self.token+"/"+requestName+"?"
