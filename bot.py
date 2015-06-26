@@ -62,7 +62,7 @@ class Bot:
             requestString = requestString[:-1]
         print requestString
         r = requests.get(requestString)
-        return r.json()
+        return r.json
         
         
     
