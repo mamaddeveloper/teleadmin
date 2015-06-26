@@ -1,3 +1,4 @@
+
 import requests
 import time
 from update import Update
@@ -20,8 +21,8 @@ class Bot:
                 break
         while True:
             self.getUpdates()
-            #time.sleep(1)
-            break
+            time.sleep(1)
+            #break
             
     def stop(self):
         lines = []
@@ -47,7 +48,8 @@ class Bot:
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id+1
         for update in listUpdates:
-            self.answerToMessage("PLS REMOVE THIS LINE§§", update.message)
+            self.answerToMessage("Ta gueule, " + update.message.fromi["first_name"], update.message)
+            #pass
         
     def answerToMessage(self, text, message):
         r = self.getJson("sendMessage", chat_id=message.chat["id"], text=text, disable_web_page_preview="true")

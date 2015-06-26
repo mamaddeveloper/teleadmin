@@ -6,7 +6,10 @@ class Message:
     #    for key in json:
       #      print( "%s, %s" %(key, json[key]))
         for key in json:
-            setattr(self, key, json[key])
+            keyToSet=key
+            if key == "from":
+                keyToSet="fromi"
+            setattr(self, keyToSet, json[key])
     
     def getChat(self):
         return self.chat
