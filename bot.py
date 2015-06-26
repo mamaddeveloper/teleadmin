@@ -1,8 +1,8 @@
-
 import requests
 import time
 from update import Update
 from message import Message
+from collections import Iterator
 
 
 class Bot:
@@ -43,7 +43,7 @@ class Bot:
         listUpdates = []
         for update in r["result"]:
             listUpdates.append(Update(update))
-            print update
+            print(update)
         sorted(listUpdates, key= lambda x: x.update_id)
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id+1
@@ -61,9 +61,6 @@ class Bot:
             requestString = requestString+key+"="+str(parameters[key])+"&"
         if requestString.endswith("&") or requestString.endswith("?"):
             requestString = requestString[:-1]
-        print requestString
+        print(requestString)
         r = requests.get(requestString)
-        return r.json
-        
-        
-    
+        return r.json()
