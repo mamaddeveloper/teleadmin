@@ -21,7 +21,7 @@ class Bot:
                 break
         while True:
             self.getUpdates()
-            time.sleep(1)
+            time.sleep(2)
             #break
             
     def stop(self):
@@ -48,7 +48,8 @@ class Bot:
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id+1
         for update in listUpdates:
-            self.answerToMessage("Ta gueule, " + update.message.fromi["first_name"], update.message)
+            if "Vincent"== update.message.fromi["first_name"] or "Vincent" == update.message.fromi["last_name"]:
+                self.answerToMessage("Merci pour ta franche participation, ma ptite baguette", update.message)
             #pass
         
     def answerToMessage(self, text, message):
