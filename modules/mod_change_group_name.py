@@ -1,21 +1,10 @@
 from bot import Bot
+from modules.module_base import ModuleBase
 
-
-class ModuleChangeGroupName():
-    def __init__(self):
-        self.bot = None
+class ModuleChangeGroupName(ModuleBase):
+    def __init__(self, bot):
+        ModuleBase.__init__(self, bot)
         self.name = "ChangeGroupName"
-
-    def getName(self):
-        return self.name
-
-    def setBot(self, bot):
-        self.bot = bot
-        print("Bot set" + str(self.bot))
-
-    def notify(self, update):
-        try:
-            if update.message.new_chat_title:
-                self.bot.sendMessage("Quel nom de merde.", update.message.chat["id"])
-        except:
-            pass
+        
+    def notify_new_chat_title(self, message_id, from_attr, date, chat, new_chat_title):
+        self.bot.sendMessage("Quel nom de merde: " + new_chat_title, chat["id"])

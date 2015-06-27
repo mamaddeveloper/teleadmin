@@ -1,2 +1,2 @@
-__all__ = ["mod_test1", "mod_change_group_name"]
+__all__ = ["module_base", "mod_change_group_name", "mod_mysql"]
 # , "mod_test2", "mod_test3"]
