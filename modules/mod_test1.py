@@ -7,6 +7,7 @@ class ModuleTest():
         
     def setBot(self, bot):
         self.bot = bot
+        print("Bot set"+str(bot))
         
     def notify(self, update):
         pass

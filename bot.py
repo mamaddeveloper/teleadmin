@@ -1,5 +1,6 @@
 import requests
 import time
+import datetime
 from update import Update
 from message import Message
 from collections import Iterator
@@ -27,7 +28,7 @@ class Bot:
         if not useWebhook:
             while not self.shouldStopPolling:
                 self.getUpdates()
-                time.sleep(2)
+                time.sleep(sleepingTime)
  
     def stop(self):
         self.shouldStopPolling=True
@@ -42,6 +43,7 @@ class Bot:
             for line in lines:
                 f.write(line)
                 f.write("\n")
+                
             
     def notify(listUpdates):
         sorted(listUpdates, key= lambda x: x.update_id)
@@ -52,7 +54,7 @@ class Bot:
                 module.notify(update)
                 
     #should not be used, since we're working using a webhook
-    def getUpdates(self):
+    def getUpdates(self, purge = False):
         r = self.getJson("getUpdates", offset=self.last_update_id)
         listUpdates = []
         for update in r["result"]:
@@ -61,9 +63,10 @@ class Bot:
         sorted(listUpdates, key= lambda x: x.update_id)
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id+1
-        for update in listUpdates:
-            for module in self.listModules:
-                module.notify(update)
+        if not purge:
+            for update in listUpdates:
+                for module in self.listModules:
+                    module.notify(update)
         
     def answerToMessage(self, text, message):
         if message is not None:
@@ -104,6 +107,9 @@ class Bot:
     def forwardMessage(self, chat_id, from_chat_id, message_id):
         r = self.getJson("forwardMessage", chat_id=chat_id, from_chat_id=from_chat_id, message_id=message_id)
         
+    def setWebhook(self, url):
+        r = self.getJson("setWebhook", url=url)
+        
     #end API methods
         
     def getJson(self, requestName, **parameters):
@@ -113,7 +119,7 @@ class Bot:
                 requestString = requestString+key+"="+str(parameters[key])+"&"
         if requestString.endswith("&") or requestString.endswith("?"):
             requestString = requestString[:-1]
-        print(requestString)
+        print(str(datetime.datetime.now().time()) + requestString)
         r = requests.get(requestString)
         return r.json()
         
