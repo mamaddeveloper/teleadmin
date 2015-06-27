@@ -46,7 +46,7 @@ class Server():
         #self.handlerMaison.addBot(bot)
         pass
         
-    def run(self, server_class=HTTPServer, port=443):
+    def run(self, server_class=HTTPServer, port=1337):
         try:
             server_address = ('', port)
             httpd = server_class(server_address, self.handlerMaison)
