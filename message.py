@@ -7,7 +7,7 @@ class Message:
         for key in json:
             keyToSet = key
             if key == "from":
-                keyToSet = "fromi"
+                keyToSet = "from_attr"
             setattr(self, keyToSet, json[key])
 
     def getChat(self):
