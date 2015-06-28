@@ -16,6 +16,7 @@ class ModuleBase:
     def notify_reply_to_message(self, message_id, from_attr, date, chat, reply_to_message):
         pass
 
+    #if you need both notify_text AND notify_command, don't forget to call super().notify_text(message_id, from_attr, date, chat, text) at the beginning of the inherited notify_text function
     def notify_text(self, message_id, from_attr, date, chat, text):
         command = text.split(" ")[0]
         if len(command) > 2:
@@ -63,4 +64,7 @@ class ModuleBase:
         pass
 
     def notify_group_chat_created(self, message_id, from_attr, date, chat, created):
+        pass    
+
+    def stop(self):
         pass

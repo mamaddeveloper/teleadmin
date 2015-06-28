@@ -53,7 +53,9 @@ class Bot:
             for line in lines:
                 f.write(line)
                 f.write("\n")
-                
+        for module in self.listModules:
+            module.stop()
+        
     def initCommandList(self):
         listStringCommands = None
         with open("commandlist", 'r') as f:
@@ -110,6 +112,7 @@ class Bot:
                 for item_name in dir(module):
                     try:
                         if "Module" in item_name and not "ModuleBase" in item_name:
+                            print(item_name)
                             newModule = getattr(module, item_name)(self)
                             # here we have a newModule that is the instanciated class, do what you want with ;)
                             self.listModules.append(newModule)
