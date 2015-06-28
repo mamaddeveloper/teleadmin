@@ -6,3 +6,4 @@ token
 *.pyc
 
 /ignore
+out.jpg
