@@ -9,7 +9,10 @@ from collections import Iterator
 class Bot:
     REQUEST_BASE = "https://api.telegram.org/bot"
     LIST_MESSAGE_MANDATORY_FIELDS = ["message_id","from_attr","date","chat"]
-    LIST_MESSAGE_OPTIONNAL_FIELDS = ["forward_from","forward_date","reply_to_message","text","audio","document","photo","sticker","video","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"]
+    LIST_MESSAGE_OPTIONNAL_FIELDS = ["reply_to_message","text","audio","document","photo","sticker","video","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"]
+    LIST_MESSAGE_FORWARD_FIELDS = ["forward_from","forward_date"]
+    
+    
 
     def __init__(self, token, directoryName):
         self.directoryName = directoryName
@@ -67,6 +70,12 @@ class Bot:
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id + 1
         for update in listUpdates:
+            for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
+                if Bot.checkForAttribute(update.message, forwardField):
+                    message = update.message
+                    for module in self.listModules:
+                        module.notify_forward(message.message_id, message.from_attr, message.date, message.chat, message.forward_from, message.forward_date)
+                    return
             for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
                 if Bot.checkForAttribute(update.message, optionnalField):
                     message = update.message
@@ -123,11 +132,33 @@ class Bot:
 
     def setWebhook(self, url):
         self.getJson("setWebhook", url=url)
+        
+    def sendPhoto(self, chat_id, photoPath, caption=None, reply_to_message_id=None, reply_markup=None):
+        #self.getJson("sendPhoto", chat_id=chat_id, photo=photo, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+        #self.postFile("sendPhoto", photo, chat_id=chat_id, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+        self.sendPhotoDict(chat_id, photoPath, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+    def sendPhotoDict(self, chat_id, photoPath, **optionnalParameters):
+        data= {}
+        for key in optionnalParameters:
+            if optionnalParameters[key] is not None:
+                data[key] = optionnalParameters[key]
+        
+        #data = {key:value for (key, value) in optionnalParameters if value is not None}
+        
+        data["chat_id"] = chat_id
+        files = {'photo':(photoPath, open(photoPath, 'rb'))}
+        self.postFile("sendPhoto", data=data, files = files)
 
     def setReplyKeyboardMarkup(self, keyboard):
         self.getJson("ReplyKeyboardMarkup", keyboard)
     # end API methods
+    
+    
 
+    def postFile(self, requestName, files, data):
+        requestString = Bot.REQUEST_BASE + self.token + "/" + requestName
+        requests.post(requestString, data=data, files=files)
+    
     #creates a request "requestName", with each key, value pair from parameters as parameters
     def getJson(self, requestName, **parameters):
         requestString = Bot.REQUEST_BASE + self.token + "/" + requestName + "?"

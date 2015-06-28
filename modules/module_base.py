@@ -10,18 +10,22 @@ class ModuleBase:
         exists = getattr(object, attribute, None)
         return exists is not None
         
-    def notify_forward_from(self, message_id, from_attr, date, chat, forward_from):
-        pass
-
-    def notify_forward_date(self, message_id, from_attr, date, chat, forward_date):
+    def notify_forward(self, message_id, from_attr, date, chat, forward_from, forward_date):
         pass
 
     def notify_reply_to_message(self, message_id, from_attr, date, chat, reply_to_message):
         pass
 
     def notify_text(self, message_id, from_attr, date, chat, text):
+        command = text.split(" ")[0]
+        if len(command) > 2:
+            command = command[1:]
+            if command in self.bot.listCommands:
+                self.notify_command(message_id, from_attr, date, chat, command, text[len(command)+1:])
+        
+    def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         pass
-
+        
     def notify_audio(self, message_id, from_attr, date, chat, audio):
         pass
 

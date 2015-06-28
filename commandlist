@@ -1,3 +1,2 @@
-addmodule - add a module
-removemodule - remove a module
-listmodules - list all modules
+fetchbeer - fetches some beer
+xkcd - get random xkcd stuff
