@@ -7,6 +7,7 @@ class ModuleTroll(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleTroll"
         self.reportedPeople = {}
+
     
     def notify_text(self, message_id, from_attr, date, chat, text):
         super().notify_text(message_id, from_attr, date, chat, text) #module will use both notify_text and notify_command functions
