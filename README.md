@@ -3,7 +3,7 @@
 
 ## Installing
 
-PYthon version 3.
+Python version 3.
 
 The python library [Requests](http://docs.python-requests.org/en/latest/user/install/#install) is required.  
 
