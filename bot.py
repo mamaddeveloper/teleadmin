@@ -172,7 +172,10 @@ class Bot:
             requestString = requestString[:-1]
         print(str(datetime.datetime.now().time()) + requestString)
         r = requests.get(requestString)
-        return r.json()
+        try:
+            return r.json()
+        except:
+            return []
 
 
 if __name__ == "__main__":
