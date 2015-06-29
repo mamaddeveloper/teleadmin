@@ -12,9 +12,9 @@ A file named "botTest/updates_log" must be created too.
 
 ## Adding a module
 
-To create a new module, create a file "modules/mod_<mod_name>.py", add an argument in "modules/init.py". 
+To create a new module, create a file "modules/mod_\<mod_name\>.py", add an argument in "modules/\__init\__.py". 
 A module is a class named Module<ModuleName> which inherits ModuleBase. Each ModuleBase's functions are called by the bot, in an event-like manner. You can override any of them to create you own bot.
 
 ## Removing a module
 
-To remove a module, remove the file in the "modules/" folder, and remove its reference in the "modules/__init__.py" file.
+To remove a module, remove the file in the "modules/" folder, and remove its reference in the "modules/\__init\__.py" file.
