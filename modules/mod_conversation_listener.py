@@ -9,16 +9,16 @@ class ModuleConversationListener(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
         self.name = "ConversationListener"
-        self.initConnection()
         self.listUserId = []
         self.counter = 0
+        self.initConnection()
+
 
     def initConnection(self):
         try:
             print("Opened database successfully")
             self.connexion = sqlite3.connect('modules/resources/conversations.db')
             self.cursor = self.connexion.cursor()
-            self.listUserId = self.getListUserId()
         except:
 
             with open("modules/resources/conversations.db"):
@@ -35,13 +35,14 @@ class ModuleConversationListener(ModuleBase):
             print("Table created successfully")
 
             self.connexion.commit()
+        self.getListUserId()
 
 
     def getListUserId(self):
         self.cursor.execute('SELECT user.id_user FROM user')
-        listrows = self.cursor.fetchall()
-        print(listrows)
-        return listrows
+        for row in self.cursor.fetchall():
+            self.listUserId.append(row[0])
+        print(self.listUserId)
 
     def insertUser(self, from_attr):
 
