@@ -8,19 +8,20 @@ from collections import Iterator
 
 class Bot:
     REQUEST_BASE = "https://api.telegram.org/bot"
-    LIST_MESSAGE_MANDATORY_FIELDS = ["message_id","from_attr","date","chat"]
-    LIST_MESSAGE_OPTIONNAL_FIELDS = ["reply_to_message","text","audio","document","photo","sticker","video","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"]
-    LIST_MESSAGE_FORWARD_FIELDS = ["forward_from","forward_date"]
-    
-    
+    LIST_MESSAGE_MANDATORY_FIELDS = ["message_id", "from_attr", "date", "chat"]
+    LIST_MESSAGE_OPTIONNAL_FIELDS = ["reply_to_message", "text", "audio", "document", "photo", "sticker", "video",
+                                     "contact", "location", "new_chat_participant", "left_chat_participant",
+                                     "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"]
+    LIST_MESSAGE_FORWARD_FIELDS = ["forward_from", "forward_date"]
 
     def __init__(self, token, directoryName):
         self.directoryName = directoryName
         self.token = token
         self.last_update_id = 0
         self.listModules = []
+        self.listExclusion = ['mod_spelling.py']
         self.getListModules()
-        
+
         self.initCommandList()
         self.useWebhook = None
         self.shouldStopPolling = None
@@ -55,18 +56,18 @@ class Bot:
                 f.write("\n")
         for module in self.listModules:
             module.stop()
-        
+
     def initCommandList(self):
         listStringCommands = None
         with open("commandlist", 'r') as f:
             listStringCommands = f.readlines()
         self.listCommands = [item.split(" ")[0] for item in listStringCommands if item != "" and item != None]
-    
+
     @staticmethod
     def checkForAttribute(object, attribute):
         exists = getattr(object, attribute, None)
         return exists is not None
-    
+
     def notify(self, listUpdates):
         sorted(listUpdates, key=lambda x: x.update_id)
         if len(listUpdates) > 0:
@@ -76,16 +77,18 @@ class Bot:
                 if Bot.checkForAttribute(update.message, forwardField):
                     message = update.message
                     for module in self.listModules:
-                        module.notify_forward(message.message_id, message.from_attr, message.date, message.chat, message.forward_from, message.forward_date)
+                        module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
+                                              message.forward_from, message.forward_date)
                     return
             for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
                 if Bot.checkForAttribute(update.message, optionnalField):
                     message = update.message
                     for module in self.listModules:
-                        toCall = getattr(module, "notify_"+optionnalField)
-                        toCall(message.message_id, message.from_attr, message.date, message.chat, getattr(message, optionnalField))
+                        toCall = getattr(module, "notify_" + optionnalField)
+                        toCall(message.message_id, message.from_attr, message.date, message.chat,
+                               getattr(message, optionnalField))
                     return
-                    
+
     # should not be used, since we're working using a webhook
     def getUpdates(self, purge=False):
         r = self.getJson("getUpdates", offset=self.last_update_id)
@@ -100,10 +103,13 @@ class Bot:
             r = self.getJson("sendMessage", chat_id=message.chat["id"], text=text, disable_web_page_preview="true")
 
     def getListModules(self):
+        
         print("Loading modules: ")
         self.listModules = []
         import os
-        modules = [os.path.splitext(f)[0] for f in os.listdir("modules") if f.startswith("mod_") and f.endswith(".py")]
+
+        modules = [os.path.splitext(f)[0] for f in os.listdir("modules") if
+                   f.startswith("mod_") and f.endswith(".py") and (not f in self.listExclusion)]
         for a in modules:
             try:
                 module = __import__("modules.%s" % a, globals(), locals(), fromlist=["*"])
@@ -119,7 +125,7 @@ class Bot:
                     except Exception as e:
                         print(e)
             except ImportError as e:
-                print (e)
+                print(e)
 
     # API methods
     def getMe(self):
@@ -128,41 +134,44 @@ class Bot:
 
     def sendMessage(self, text, chat_id, disable_web_page_preview="true", reply_to_message_id=None, reply_markup=None):
         self.getJson("sendMessage", chat_id=chat_id, text=text, disable_web_page_preview=disable_web_page_preview,
-                         reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+                     reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
 
     def forwardMessage(self, chat_id, from_chat_id, message_id):
         self.getJson("forwardMessage", chat_id=chat_id, from_chat_id=from_chat_id, message_id=message_id)
 
     def setWebhook(self, url):
         self.getJson("setWebhook", url=url)
-        
+
     def sendPhoto(self, chat_id, photoPath, caption=None, reply_to_message_id=None, reply_markup=None):
-        #self.getJson("sendPhoto", chat_id=chat_id, photo=photo, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
-        #self.postFile("sendPhoto", photo, chat_id=chat_id, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
-        self.sendPhotoDict(chat_id, photoPath, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+        # self.getJson("sendPhoto", chat_id=chat_id, photo=photo, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+        # self.postFile("sendPhoto", photo, chat_id=chat_id, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+        self.sendPhotoDict(chat_id, photoPath, caption=caption, reply_to_message_id=reply_to_message_id,
+                           reply_markup=reply_markup)
+
     def sendPhotoDict(self, chat_id, photoPath, **optionnalParameters):
-        data= {}
+        data = {}
         for key in optionnalParameters:
             if optionnalParameters[key] is not None:
                 data[key] = optionnalParameters[key]
-        
-        #data = {key:value for (key, value) in optionnalParameters if value is not None}
-        
+
+        # data = {key:value for (key, value) in optionnalParameters if value is not None}
+
         data["chat_id"] = chat_id
-        files = {'photo':(photoPath, open(photoPath, 'rb'))}
-        self.postFile("sendPhoto", data=data, files = files)
+        files = {'photo': (photoPath, open(photoPath, 'rb'))}
+        self.postFile("sendPhoto", data=data, files=files)
 
     def setReplyKeyboardMarkup(self, keyboard):
         self.getJson("ReplyKeyboardMarkup", keyboard)
+
     # end API methods
-    
-    
+
+
 
     def postFile(self, requestName, files, data):
         requestString = Bot.REQUEST_BASE + self.token + "/" + requestName
         requests.post(requestString, data=data, files=files)
-    
-    #creates a request "requestName", with each key, value pair from parameters as parameters
+
+    # creates a request "requestName", with each key, value pair from parameters as parameters
     def getJson(self, requestName, **parameters):
         requestString = Bot.REQUEST_BASE + self.token + "/" + requestName + "?"
         for key in parameters:
@@ -175,7 +184,7 @@ class Bot:
         try:
             return r.json()
         except TypeError:
-            return {'result':[]}
+            return {'result': []}
 
 
 if __name__ == "__main__":
