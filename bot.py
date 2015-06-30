@@ -174,8 +174,8 @@ class Bot:
         r = requests.get(requestString)
         try:
             return r.json()
-        except:
-            return []
+        except TypeError:
+            return {'result':[]}
 
 
 if __name__ == "__main__":
