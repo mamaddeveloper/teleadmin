@@ -103,7 +103,7 @@ class Bot:
             r = self.getJson("sendMessage", chat_id=message.chat["id"], text=text, disable_web_page_preview="true")
 
     def getListModules(self):
-        
+
         print("Loading modules: ")
         self.listModules = []
         import os
