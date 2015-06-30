@@ -40,8 +40,9 @@ def correct(word):
 
 
 class ModuleSpelling(ModuleBase):
-    NWORDS = train(words('modules/ressources/FrenchDictionnary.txt'))
+    NWORDS = train(words('modules/resources/FrenchDictionnary.txt'))
     alphabet = 'abcdefghijklmnopqrstuvwxyzàâæçéèêîïëôœùûüÿ'
+    people = {'Deruaz','Pierre', 'Jules', 'Eddy'}
 
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
@@ -50,10 +51,10 @@ class ModuleSpelling(ModuleBase):
     # Spelling correction
     def notify_text(self, message_id, from_attr, date, chat, text):
 
-        # Only words bigger than 3 letters
-        words = re.findall("\w{3,}", text.lower(), re.UNICODE)
+        # Only words bigger than 4 letters
+        words = re.findall("\w{4,}", text.lower(), re.UNICODE)
 
-        if from_attr['first_name'] == "Michael":
+        if from_attr['first_name'] in ModuleSpelling.people:
             wordList = {}
             for word in words:
 

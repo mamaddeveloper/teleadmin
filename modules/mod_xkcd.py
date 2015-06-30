@@ -14,7 +14,7 @@ import io
 
 class ModuleXKCD(ModuleBase):
     
-    FILE_NAME = "modules/xkcd.last"
+    FILE_NAME = "modules/resources/xkcd.last"
     
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
