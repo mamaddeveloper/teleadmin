@@ -9,3 +9,4 @@ token
 out.jpg
 /modules/resources/conversations.db
 /modules/resources/chatterbot.db
+/.idea

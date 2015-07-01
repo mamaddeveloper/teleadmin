@@ -123,9 +123,9 @@ class Bot:
                             # here we have a newModule that is the instanciated class, do what you want with ;)
                             self.listModules.append(newModule)
                     except Exception as e:
-                        print(e)
+                        print("Fail to load module %s : %s" % (a, e))
             except ImportError as e:
-                print(e)
+                print("Fail to load module %s : %s" % (a, e))
 
     # API methods
     def getMe(self):
