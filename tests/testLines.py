@@ -18,4 +18,4 @@ class TestLines(unittest.TestCase):
     def do_test(self, cl):
         l = cl(self.FILE)
         for i in range(self.N):
-            next(l)
+            self.assertTrue(len(next(l)) > 0)
