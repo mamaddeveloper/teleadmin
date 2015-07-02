@@ -21,6 +21,7 @@ class Bot:
         self.last_update_id = 0
         self.listModules = []
         self.listExclusion = ['mod_spelling.py','mod_chatterbot.py']
+        self.loadLocalExclusion()
         self.getListModules()
 
         self.initCommandList()
@@ -106,6 +107,13 @@ class Bot:
     def answerToMessage(self, text, message):
         if message is not None:
             r = self.getJson("sendMessage", chat_id=message.chat["id"], text=text, disable_web_page_preview="true")
+    def loadLocalExclusion(self):
+        import os.path
+        file = "botTest/modules_exclude_local"
+        if os.path.exists(file):
+            with open(file, 'r') as f:
+                for line in f:
+                    self.listExclusion.append(line.rstrip())
 
     def getListModules(self):
 
@@ -128,9 +136,9 @@ class Bot:
                             # here we have a newModule that is the instanciated class, do what you want with ;)
                             self.listModules.append(newModule)
                     except Exception as e:
-                        print(e)
+                        print("Fail to load module %s : %s" % (a, e))
             except ImportError as e:
-                print(e)
+                print("Fail to load module %s : %s" % (a, e))
 
     # API methods
     def getMe(self):

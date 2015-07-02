@@ -2,6 +2,7 @@
 
 updates_log
 token
+/botTest
 
 *.pyc
 
@@ -9,3 +10,4 @@ token
 out.jpg
 /modules/resources/conversations.db
 /modules/resources/chatterbot.db
+/.idea
