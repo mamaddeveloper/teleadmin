@@ -12,3 +12,5 @@ class ModuleChangeGroupName(ModuleBase):
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "fetchbeer":
             self.bot.sendMessage( "C'est pas l'heure de boire mon ptit choupinet.\nRetourne coder.", chat["id"])
+        elif commandName == "fetchsandwich":
+            self.bot.sendPhoto(chat["id"], "modules/resources/sandwich.jpg", "Bon appetit, " + from_attr["first_name"])
