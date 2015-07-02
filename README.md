@@ -7,8 +7,9 @@ Python version 3.
 
 The python library [Requests](http://docs.python-requests.org/en/latest/user/install/#install) is required.  
 
-For now, you'll have to create a file named "botTest/token" which contains you bot's token.
-A file named "botTest/updates_log" must be created too.
+For now, you'll have to run installer like this :
+
+    python3 main.py --install [tocken]
 
 ## Adding a module
 
