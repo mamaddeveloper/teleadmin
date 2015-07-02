@@ -17,5 +17,5 @@ A module is a class named Module\<ModuleName\> which inherits ModuleBase. Each M
 
 ## Removing a module
 
-To remove a module, remove the file in the "modules/" folder. If you want to keep a module but don't want to load it, you can edit the excluded_modules text file.
+To remove a module, remove the file in the "modules/" folder. If you want to keep a module but don't want to load it, you can edit the "botTest/modules_exclude_local" text file.
 
