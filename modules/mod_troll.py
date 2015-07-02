@@ -15,7 +15,7 @@ class ModuleTroll(ModuleBase):
             self.reportedPeople[name] = self.reportedPeople[name] - 1
             if self.reportedPeople[name] == -1:
                 del self.reportedPeople[name]
-            elif self.reportedPeople[name] != ModuleTroll.NUMBER_REPORT_MESSAGES -1:
+            else:
                 text = name + ", t'es un vieux zgeg. HUEHUEHUEHUEHUE"
                 self.bot.sendMessage(text, chat["id"])
                 
