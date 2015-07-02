@@ -11,7 +11,6 @@ class ModuleBaguette(ModuleBase):
         self.lines = lines.LinesSeqRnd("modules/resources/bag.txt")
 
     def notify_text(self, message_id, from_attr, date, chat, text):
-        super().notify_text(message_id, from_attr, date, chat, text) #module will use both notify_text and notify_command functions
         name = from_attr["first_name"]
         if name in self.users:
             text = name + " " + next(self.lines)
