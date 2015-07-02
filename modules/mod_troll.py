@@ -10,7 +10,6 @@ class ModuleTroll(ModuleBase):
 
     
     def notify_text(self, message_id, from_attr, date, chat, text):
-        super().notify_text(message_id, from_attr, date, chat, text) #module will use both notify_text and notify_command functions
         name = from_attr["first_name"]
         if name in self.reportedPeople.keys():
             self.reportedPeople[name] = self.reportedPeople[name] - 1

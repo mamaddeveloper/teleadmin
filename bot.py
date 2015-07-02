@@ -8,8 +8,9 @@ from collections import Iterator
 
 class Bot:
     REQUEST_BASE = "https://api.telegram.org/bot"
+    MESSAGE_TEXT_FIELD = "text"
     LIST_MESSAGE_MANDATORY_FIELDS = ["message_id", "from_attr", "date", "chat"]
-    LIST_MESSAGE_OPTIONNAL_FIELDS = ["reply_to_message", "text", "audio", "document", "photo", "sticker", "video",
+    LIST_MESSAGE_OPTIONNAL_FIELDS = ["reply_to_message", "audio", "document", "photo", "sticker", "video",
                                      "contact", "location", "new_chat_participant", "left_chat_participant",
                                      "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"]
     LIST_MESSAGE_FORWARD_FIELDS = ["forward_from", "forward_date"]
@@ -19,7 +20,7 @@ class Bot:
         self.token = token
         self.last_update_id = 0
         self.listModules = []
-        self.listExclusion = ['mod_spelling.py']
+        self.listExclusion = ['mod_spelling.py','mod_chatterbot.py']
         self.getListModules()
 
         self.initCommandList()
@@ -73,16 +74,20 @@ class Bot:
         if len(listUpdates) > 0:
             self.last_update_id = listUpdates[-1].update_id + 1
         for update in listUpdates:
+            message = update.message
+            if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
+                for module in self.listModules:
+                    module.filter_text_command(message.message_id, message.from_attr, message.date, message.chat, message.text)
+                return
             for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
-                if Bot.checkForAttribute(update.message, forwardField):
-                    message = update.message
+                if Bot.checkForAttribute(message, forwardField):
                     for module in self.listModules:
                         module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
                                               message.forward_from, message.forward_date)
                     return
             for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
-                if Bot.checkForAttribute(update.message, optionnalField):
-                    message = update.message
+                if Bot.checkForAttribute(message, optionnalField):
+                    
                     for module in self.listModules:
                         toCall = getattr(module, "notify_" + optionnalField)
                         toCall(message.message_id, message.from_attr, message.date, message.chat,
