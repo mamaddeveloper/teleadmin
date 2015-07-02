@@ -23,9 +23,9 @@ class ModuleBase:
             if command in self.bot.listCommands:
                 self.notify_command(message_id, from_attr, date, chat, command, text[len(command)+2:])
             else:
-                self.notify_text(message_id, from_attr, date, chat, command, text)
+                self.notify_text(message_id, from_attr, date, chat, text)
         else:
-            self.notify_text(message_id, from_attr, date, chat, command, text)
+            self.notify_text(message_id, from_attr, date, chat, text)
 
     def notify_text(self, message_id, from_attr, date, chat, text):
         pass
