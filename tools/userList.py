@@ -14,7 +14,9 @@ class UserList:
         self.dict[self.key(item)] = data
 
     def remove(self, item):
-        del self.dict[self.key(item)]
+        key = self.key(item)
+        if key in self.dict:
+            del self.dict[self.key(item)]
 
     def key(self, item):
         return item.lower()
