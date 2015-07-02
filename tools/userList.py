@@ -21,19 +21,3 @@ class UserList:
 
     def get(self, item):
         return self.dict[self.key(item)]
-
-if __name__ == '__main__':
-    list = UserList()
-    print("toto" in list)
-    list.add("toto")
-    print("toto" in list)
-    print("Toto" in list)
-    print(list.set("toto"))
-    list.set("toto", "faf")
-    print(list.get("toto"))
-    list.add("toto")
-    print(list.get("toto"))
-    list.add("toto", "dda")
-    print(list.get("toto"))
-    list.remove("toto")
-    print("toto" in list)

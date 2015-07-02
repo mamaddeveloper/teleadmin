@@ -1,0 +1,5 @@
+from tests.testUserList import TestUserList
+import unittest
+
+if __name__ == '__main__':
+    unittest.main()
