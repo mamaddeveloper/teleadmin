@@ -3,3 +3,5 @@ putain
 con
 connard
 zgeg
+cochon
+fourre
