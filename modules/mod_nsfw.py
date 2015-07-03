@@ -35,7 +35,10 @@ class ModuleNSFW(ModuleBase):
                 if "last" in commandStr:
                     self.getBonjourImage(chat["id"], 'http://www.bonjourmadame.fr/',xpath_, message)
                 elif "random" in commandStr:
-                    self.getBonjourImage(chat["id"], 'http://www.bonjourmadame.fr/random',xpath_, message)
+                    try:
+                        self.getBonjourImage(chat["id"], 'http://www.bonjourmadame.fr/random',xpath_, message)
+                    except:
+                        self.bot.sendMessage("Fucking random website crash", chat["id"])
             if "monsieur" in commandStr:
                 message = "Bonjour monsieur."
                 xpath_ =  '//div[@class="img"]/h1/img/@src'
