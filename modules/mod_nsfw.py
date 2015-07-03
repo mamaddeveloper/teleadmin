@@ -1,20 +1,14 @@
-from bot import Bot
 from modules.module_base import ModuleBase
 import requests
 from lxml import html
-from urllib.parse import urlparse
 from urllib.parse import urljoin
-from urllib.request import urlopen, urlretrieve
-
-import sys
-import traceback
+from urllib.request import urlretrieve
 
 class ModuleNSFW(ModuleBase):
     
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
         self.name = "NSFW"
-        
 
     def getBonjourImage(self, chatId, site, xpath_, message):
         response = requests.get(site)
@@ -28,7 +22,6 @@ class ModuleNSFW(ModuleBase):
         urlretrieve(image, "out.jpg") #works with static address
         
         self.bot.sendPhoto(chatId, "out.jpg", message)
-
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "bonjour":
@@ -49,6 +42,3 @@ class ModuleNSFW(ModuleBase):
                     self.getBonjourImage(chat["id"], 'http://www.bonjourmonsieur.fr/', xpath_, message)
                 elif "random" in commandStr:
                     self.getBonjourImage(chat["id"], 'http://www.bonjourmonsieur.fr/monsieur/random.html', xpath_, message)
-
-                    
-
