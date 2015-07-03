@@ -63,7 +63,6 @@ class ModuleSpelling(ModuleBase):
                 if bestSolution != word:
                     wordList[word] = candidates
 
-
             if len(wordList.keys()) > 0:
                 message = "Nombre de mots mal orthographiés : " + str(len(wordList)) + "\nVoici leurs corrections:\n\n"
 
