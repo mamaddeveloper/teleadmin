@@ -5,7 +5,6 @@ class CommandParser:
         self.listValid = listValid
 
     def parse(self, text):
-        text =str(text)
         if not text.startswith("/"):
             return self.invalid()
         parts = text.split(" ")
