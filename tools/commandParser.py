@@ -19,16 +19,17 @@ class CommandParser:
             return self.invalid()
 
         if cmd not in self.listValid:
-            return self.invalid()
+            return CommandResult(True, False, cmd, args)
 
-        return CommandResult(True, cmd, args)
+        return CommandResult(True, True, cmd, args)
 
     @staticmethod
     def invalid():
         return CommandResult(False)
 
 class CommandResult:
-    def __init__(self, isValid, command="", args=""):
+    def __init__(self, isValid, isKnown=False, command="", args=""):
         self.isValid = isValid
+        self.isKnown = isKnown
         self.command = command
         self.args = args

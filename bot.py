@@ -80,6 +80,9 @@ class Bot:
             message = update.message
             if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
                 cmd = self.commandParser.parse(message.text)
+                if cmd.isValid and not cmd.isKnown:
+                    self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
+                    return
                 for module in self.listModules:
                     if cmd.isValid:
                         module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
