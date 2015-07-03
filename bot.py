@@ -2,8 +2,7 @@ import requests
 import time
 import datetime
 from update import Update
-from message import Message
-from collections import Iterator
+from tools.commandParser import CommandParser
 
 
 class Bot:
@@ -24,9 +23,11 @@ class Bot:
         self.loadLocalExclusion()
         self.getListModules()
 
-        self.initCommandList()
         self.useWebhook = None
         self.shouldStopPolling = None
+        self.listCommands = None
+        self.commandParser = None
+        self.initCommandList()
 
     def start(self, useWebhook=True, sleepingTime=2):
         lines = []
@@ -64,6 +65,7 @@ class Bot:
         with open("commandlist", 'r') as f:
             listStringCommands = f.readlines()
         self.listCommands = [item.split(" ")[0] for item in listStringCommands if item != "" and item != None]
+        self.commandParser = CommandParser(self.listCommands)
 
     @staticmethod
     def checkForAttribute(object, attribute):
