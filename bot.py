@@ -79,8 +79,12 @@ class Bot:
         for update in listUpdates:
             message = update.message
             if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
+                cmd = self.commandParser.parse(message.text)
                 for module in self.listModules:
-                    module.filter_text_command(message.message_id, message.from_attr, message.date, message.chat, message.text)
+                    if cmd.isValid:
+                        module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
+                    else:
+                        module.notify_text(message.message_id, message.from_attr, message.date, message.chat, message.text)
                 return
             for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
                 if Bot.checkForAttribute(message, forwardField):

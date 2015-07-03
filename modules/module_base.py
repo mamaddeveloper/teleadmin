@@ -15,13 +15,6 @@ class ModuleBase:
 
     def notify_reply_to_message(self, message_id, from_attr, date, chat, reply_to_message):
         pass  
-  
-    def filter_text_command(self, message_id, from_attr, date, chat, text):
-        result = self.bot.commandParser.parse(text)
-        if result.isValid:
-            self.notify_command(message_id, from_attr, date, chat, result.command, result.args)
-        else:
-            self.notify_text(message_id, from_attr, date, chat, text)
 
     def notify_text(self, message_id, from_attr, date, chat, text):
         pass
