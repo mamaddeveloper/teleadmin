@@ -6,6 +6,9 @@ from urllib.parse import urlparse
 from urllib.parse import urljoin
 from urllib.request import urlopen, urlretrieve
 
+import sys
+import traceback
+
 class ModuleNSFW(ModuleBase):
     
     def __init__(self, bot):
@@ -31,7 +34,7 @@ class ModuleNSFW(ModuleBase):
         if commandName == "bonjour":
             if "madame" in commandStr:
                 message = "Bonjour madame."
-                xpath_ = '//div[@class="photo post"]/a/img/@src'
+                xpath_ = '//div[@class="photo post"]//img/@src'
                 if "last" in commandStr:
                     self.getBonjourImage(chat["id"], 'http://www.bonjourmadame.fr/',xpath_, message)
                 elif "random" in commandStr:
