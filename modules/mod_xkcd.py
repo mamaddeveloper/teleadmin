@@ -2,15 +2,11 @@ from bot import Bot
 from modules.module_base import ModuleBase
 import requests
 from lxml import html
-import sys
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 from random import randint
 from urllib.request import urlopen, urlretrieve
 
-
-import io
-#from StringIO import StringIO
 
 class ModuleXKCD(ModuleBase):
     
