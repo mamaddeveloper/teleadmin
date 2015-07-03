@@ -4,6 +4,7 @@ from chatterbot import ChatBot
 from random import randint
 
 
+
 class ModuleChatterBot(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
