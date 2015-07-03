@@ -6,7 +6,7 @@ class ModuleBaguette(ModuleBase):
     NUMBER_REPORT_MESSAGES = 5 + 1
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
-        self.name = "ModuleBaguette"
+        self.name = "ModuleBadWords"
         self.bad = bad.Bad("modules/resources/bad.txt")
 
     def notify_text(self, message_id, from_attr, date, chat, text):
