@@ -13,4 +13,8 @@ class ModuleChangeGroupName(ModuleBase):
         if commandName == "fetchbeer":
             self.bot.sendMessage( "C'est pas l'heure de boire mon ptit choupinet.\nRetourne coder.", chat["id"])
         elif commandName == "fetchsandwich":
-            self.bot.sendPhoto(chat["id"], "modules/resources/sandwich.jpg", "Bon appetit, " + from_attr["first_name"])
+            if len(commandStr) > 0 :
+                text = "%s offre un sandwich à %s" % (from_attr["first_name"], commandStr)
+            else:
+                text = "Bon appetit, %s" % from_attr["first_name"]
+            self.bot.sendPhoto(chat["id"], "modules/resources/sandwich.jpg", text)
