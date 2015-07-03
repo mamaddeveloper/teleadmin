@@ -9,7 +9,7 @@ class CommandParser:
         if not text.startswith("/"):
             return self.invalid()
         parts = text.split(" ")
-        args = None
+        args = ""
         if (len(parts) > 1):
             args = " ".join(parts[1:])
         cmd = parts[0][1:].lower()
@@ -29,7 +29,7 @@ class CommandParser:
         return CommandResult(False)
 
 class CommandResult:
-    def __init__(self, isValid, command=None, args=None):
+    def __init__(self, isValid, command="", args=""):
         self.isValid = isValid
         self.command = command
         self.args = args

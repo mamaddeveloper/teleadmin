@@ -5,19 +5,19 @@ class TestCommandParser(unittest.TestCase):
 
     def test_main(self):
         cases = (
-            ("/test", True, "test", None),
+            ("/test", True, "test", ""),
             ("/test aa", True, "test", "aa"),
             ("/test aa bb", True, "test", "aa bb"),
-            ("atest", False, None, None),
-            ("#test", False, None, None),
-            ("test", False, None, None),
-            ("test aa", False, None, None),
-            ("/test@", True, "test", None),
+            ("atest", False, "", ""),
+            ("#test", False, "", ""),
+            ("test", False, "", ""),
+            ("test aa", False, "", ""),
+            ("/test@", True, "test", ""),
             ("/test@ aa", True, "test", "aa"),
-            ("/test@toto", True, "test", None),
+            ("/test@toto", True, "test", ""),
             ("/test@toto aa", True, "test", "aa"),
-            ("/t", False, None, None),
-            ("/t aa", False, None, None),
+            ("/t", False, "", ""),
+            ("/t aa", False, "", ""),
         )
         cmds = ("test")
         cmd = CommandParser(cmds)
