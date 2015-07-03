@@ -15,7 +15,7 @@ class CommandParser:
         cmd = parts[0][1:].lower()
         if "@" in cmd:
             cmd = cmd.split("@")[0]
-            
+
         if len(cmd) <= 1:
             return self.invalid()
 

@@ -7,6 +7,9 @@ class TestCommandParser(unittest.TestCase):
         cases = (
             ("/test", True, "test", None),
             ("/test aa", True, "test", "aa"),
+            ("/test aa bb", True, "test", "aa bb"),
+            ("atest", False, None, None),
+            ("#test", False, None, None),
             ("test", False, None, None),
             ("test aa", False, None, None),
             ("/test@", True, "test", None),
