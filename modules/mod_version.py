@@ -5,6 +5,10 @@ import subprocess
 class ModuleVersion(ModuleBase):
     PATH = os.path.dirname(os.path.dirname(__file__))
 
+    def __init__(self, bot):
+        ModuleBase.__init__(self, bot)
+        self.name = "ModuleVersion"
+
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "version":
             try:
