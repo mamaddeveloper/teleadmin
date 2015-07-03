@@ -1,11 +1,11 @@
-fetchbeer - Fetches some beer.
-xkcd - Get xkcd comics. Use with keywords: last, random or <number> 
-report - Report someone. HUEHUEHUEHUE
-bag - baguette
-sbag - baguette
-slogan - Beau slogan
-fetchsandwich - Fetches some sandwich.
-bonjour - Bonjour. Keywords: <madame/monsieur> <last/random>
 bad - Add bad word
-version - Get bot version
+bag - Add baguette
+bonjour - Bonjour. Keywords: <madame/monsieur> <last/random>
+fetchbeer - Fetches some beer.
+fetchsandwich - Fetches some sandwich. Optional keyword name
 help - Show help
+report - Report someone. HUEHUEHUEHUE
+sbag - Remove baguette
+slogan - Beau slogan
+version - Get bot version
+xkcd - Get xkcd comics. Use with keywords: last, random or <number> 
