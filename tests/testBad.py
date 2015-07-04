@@ -6,7 +6,7 @@ class TestBad(unittest.TestCase):
     FILE = os.path.join(os.path.dirname(__file__), "../modules/resources/bad.txt")
 
     CASES = (
-        ("tamer", False),
+        ("tame", False),
         ("tamere", True),
         ("a tamere", True),
         ("tamere a", True),

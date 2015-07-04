@@ -7,5 +7,6 @@ help - Show help
 report - Report someone. HUEHUEHUEHUE
 sbag - Remove baguette
 slogan - Beau slogan
+vdm - VDM. Keywords : <last/random>
 version - Get bot version
 xkcd - Get xkcd comics. Use with keywords: last, random or <number> 
