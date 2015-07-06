@@ -7,9 +7,13 @@ Python version 3.
 
 The python library [Requests](http://docs.python-requests.org/en/latest/user/install/#install) is required.  
 
-For now, you'll have to run installer like this :
+For now, you'll have to run the installer like this :
 
-    python3 main.py --install [tocken]
+    python3 main.py --install [token]
+
+## Launching the bot
+
+    python3 main.py [--purge]
 
 ## Adding a module
 
