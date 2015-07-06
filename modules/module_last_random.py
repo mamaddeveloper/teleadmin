@@ -18,4 +18,4 @@ class ModuleBaseLastRandom(ModuleBase):
         elif commandStr == "random" or commandStr == "":
             self.bot.sendMessage(self.provider.random(), chat["id"])
         else:
-            self.bot.sendMessage("command combination %s %s unknown" % (self.cmd, commandStr))
+            self.bot.sendMessage("command combination '/%s %s' unknown" % (self.cmd, commandStr), chat["id"])
