@@ -82,19 +82,19 @@ class Bot:
                 cmd = self.commandParser.parse(message.text)
                 if cmd.isValid and not cmd.isKnown:
                     self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
-                    return
+                    continue
                 for module in self.listModules:
                     if cmd.isValid:
                         module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
                     else:
                         module.notify_text(message.message_id, message.from_attr, message.date, message.chat, message.text)
-                return
+                continue
             for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
                 if Bot.checkForAttribute(message, forwardField):
                     for module in self.listModules:
                         module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
                                               message.forward_from, message.forward_date)
-                    return
+                    continue
             for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
                 if Bot.checkForAttribute(message, optionnalField):
                     
@@ -102,7 +102,7 @@ class Bot:
                         toCall = getattr(module, "notify_" + optionnalField)
                         toCall(message.message_id, message.from_attr, message.date, message.chat,
                                getattr(message, optionnalField))
-                    return
+                    continue
 
     # should not be used, since we're working using a webhook
     def getUpdates(self, purge=False):
