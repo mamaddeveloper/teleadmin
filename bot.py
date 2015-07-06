@@ -113,6 +113,8 @@ class Bot:
             listUpdates.append(Update(update))
         if not purge:
             self.notify(listUpdates)
+        else:
+            self.last_update_id = max([x.update_id for x in listUpdates]) + 1
 
     def answerToMessage(self, text, message):
         if message is not None:

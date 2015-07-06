@@ -38,7 +38,9 @@ def main():
     bot = Bot(token, "botTest")
     if purge:
         bot.setWebhook("")
+        bot.start(purge)
         bot.getUpdates(purge)
+        bot.stop()
         return
     if useWebhook:
         bot.setWebhook(useWebhook)
