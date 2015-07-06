@@ -12,6 +12,11 @@ class VoteManager:
             raise NoVoteException()
         self.currentVote.vote(user["id"], vote)
 
+    def state(self):
+        if not self.currentVote:
+            raise NoVoteException()
+        return self.currentVote
+
     def close(self, user):
         if not self.currentVote:
             raise NoVoteException()

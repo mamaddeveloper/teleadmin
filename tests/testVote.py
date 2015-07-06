@@ -20,6 +20,14 @@ class TestVote(unittest.TestCase):
         except NoVoteException:
             pass
 
+    def test_no_vote_State(self):
+        v = VoteManager()
+        try:
+            v.state()
+            self.fail()
+        except NoVoteException:
+            pass
+
     def test_no_vote_close(self):
         v = VoteManager()
         try:
