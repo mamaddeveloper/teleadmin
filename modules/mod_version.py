@@ -12,7 +12,8 @@ class ModuleVersion(ModuleBase):
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "version":
             try:
-                text = subprocess.check_output(["git","log", "-1"], cwd=self.PATH).decode("utf-8")
+                text = "https://github.com/nichuguen/TelegramBot/\n"
+                text += subprocess.check_output(["git","log", "-1"], cwd=self.PATH).decode("utf-8")
                 print(type(text))
                 self.bot.sendMessage(text, chat["id"])
             except:
