@@ -15,5 +15,4 @@ class TestDtc(unittest.TestCase):
             self.valid(dtc.random())
 
     def valid(self, text):
-        #TODO if anyone has a better idea
-        pass
+        self.assertTrue(len(text) > 10, text)
