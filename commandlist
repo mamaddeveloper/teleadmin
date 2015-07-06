@@ -1,6 +1,7 @@
 bad - Add bad word
 bag - Add baguette
 bonjour - Bonjour. Keywords: <madame/monsieur> <last/random>
+dtc - DTC. Keywords : <last/random>
 fetchbeer - Fetches some beer.
 fetchsandwich - Fetches some sandwich. Optional keyword name
 help - Show help

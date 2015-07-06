@@ -15,5 +15,5 @@ class TestVdm(unittest.TestCase):
             self.valid(vdm.random())
 
     def valid(self, text):
-        self.assertTrue(text.startswith("Aujourd'hui,"))
-        self.assertTrue(text.endswith("VDM"))
+        self.assertTrue(text.startswith("Aujourd'hui"), text)
+        self.assertTrue(text.endswith("VDM"), text)
