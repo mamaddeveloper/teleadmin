@@ -14,6 +14,7 @@ class Bot:
                                      "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"]
     LIST_MESSAGE_FORWARD_FIELDS = ["forward_from", "forward_date"]
 
+
     def __init__(self, token, directoryName):
         self.directoryName = directoryName
         self.token = token
