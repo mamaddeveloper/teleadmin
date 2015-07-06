@@ -15,14 +15,25 @@ class VoteManager:
     def state(self):
         if not self.currentVote:
             raise NoVoteException()
-        return self.currentVote
+        return VoteResult(self.currentVote, False)
 
     def close(self, user):
         if not self.currentVote:
             raise NoVoteException()
         vote = self.currentVote
         self.currentVote = None
-        return vote
+        return VoteResult(vote, True)
+
+class VoteResult:
+    def __init__(self, vote, end):
+        if not isinstance(vote, Vote):
+            raise ValueError("Vote is not a vote")
+        self.name = vote.name
+        self.votesFor = vote.votesFor
+        self.votesAgainst = vote.votesAgainst
+        self.voteCount = len(vote.votes)
+        self.rate = 0 if self.voteCount == 0 else self.votesFor / self.voteCount
+        self.end = bool(end)
 
 class Vote:
     def __init__(self, name):
