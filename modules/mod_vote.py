@@ -12,7 +12,7 @@ class ModuleVote(ModuleBase):
                 commandStr = str(commandStr)
                 if commandStr == "close":
                     vote = self.manager.close(from_attr)
-                    text = self.vote_tostring(vote, False)
+                    text = self.vote_tostring(vote, True)
                     self.bot.sendMessage(text, chat["id"])
                 elif commandStr == "state":
                     vote = self.manager.state()
@@ -38,7 +38,7 @@ class ModuleVote(ModuleBase):
                 self.bot.sendMessage("Tu pensais pouvoir voter plusieurs fois, petit malin...", chat["id"])
             except Exception as e:
                 self.bot.sendMessage("Unknown vote exception : %s" % e, chat["id"])
-    def vote_tostring(self, vote, tmp):
+    def vote_tostring(self, vote, end):
         nbVotes = len(vote.votes)
         rate = 0
         if nbVotes > 0:
@@ -50,5 +50,5 @@ class ModuleVote(ModuleBase):
         else:
             resultat = "refusé"
         return "Résultat du vote '%s' : \nVotes pour : %d\nVotes contre : %d\nNombre votant : %d\nRésultat (%s) : %s (%.2f%%)" \
-               % (vote.name, vote.votesFor, vote.votesAgainst, nbVotes, "provisoir" if tmp else "défénitif",  resultat, rate * 100)
+               % (vote.name, vote.votesFor, vote.votesAgainst, nbVotes, "définitif" if end else "provisoir",  resultat, rate * 100)
 
