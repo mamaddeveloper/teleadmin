@@ -7,6 +7,7 @@ class ModuleExplosm(ModuleBase):
 
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
+        self.name = "ModuleExplosm"
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "explosm":
