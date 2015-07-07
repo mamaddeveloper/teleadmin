@@ -4,6 +4,8 @@ class ModuleTimeleft(ModuleBase):
     DATES = {
         "rendu": datetime(2015, 7, 14, 17, 00),
         "budapest": datetime(2015, 7, 15, 14, 00),
+        "défences": datetime(2015, 8, 17, 00, 00),
+        "diplome": datetime(2015, 10, 19, 18, 00),
     }
 
     def __init__(self, bot):
