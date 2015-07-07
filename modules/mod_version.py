@@ -1,6 +1,7 @@
 from modules.module_base import ModuleBase
 import os.path
 import subprocess
+import platform
 
 class ModuleVersion(ModuleBase):
     PATH = os.path.dirname(os.path.dirname(__file__))
@@ -12,7 +13,9 @@ class ModuleVersion(ModuleBase):
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "version":
             try:
-                text = subprocess.check_output(["git","remote", "-v"], cwd=self.PATH).decode("utf-8")
+                text = ""
+                text += "Python version %s\n" % platform.python_version()
+                text += subprocess.check_output(["git","remote", "-v"], cwd=self.PATH).decode("utf-8")
                 text += subprocess.check_output(["git","log", "-1"], cwd=self.PATH).decode("utf-8")
                 print(type(text))
                 self.bot.sendMessage(text, chat["id"])
