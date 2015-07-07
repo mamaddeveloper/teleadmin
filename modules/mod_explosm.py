@@ -2,7 +2,7 @@ from modules.module_base import ModuleBase
 from tools.imageSender import ImageSender
 
 class ModuleExplosm(ModuleBase):
-    URL = "http://explosm.net/comics/"
+    URL = "https://explosm.net/comics/"
     XPATH = '//img[@id="main-comic"]/@src'
 
     def __init__(self, bot):
