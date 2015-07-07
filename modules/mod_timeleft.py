@@ -20,3 +20,10 @@ class ModuleTimeleft(ModuleBase):
             else:
                 text = "Echéance %s inconnue" % commandStr
             self.bot.sendMessage(text, chat["id"])
+        elif commandName == "date":
+            if commandStr in self.DATES:
+                date = self.DATES[commandStr]
+                text = "Date %s : %s" % (commandStr, date)
+            else:
+                text = "Date %s inconnue" % commandStr
+            self.bot.sendMessage(text, chat["id"])
