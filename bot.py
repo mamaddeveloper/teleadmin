@@ -209,7 +209,7 @@ class Bot:
         r = requests.get(requestString)
         try:
             return r.json()
-        except TypeError:
+        except:
             return {'result': []}
 
 
