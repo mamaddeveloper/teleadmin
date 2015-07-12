@@ -5,7 +5,7 @@ class ModuleHelp(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleHelp"
         with open("commandlist", 'r') as f:
-            self.text = "Bot help : \n" + "".join(f.readlines())
+            self.text = "Bot help : \n/" + "/".join(f.readlines())
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "help":
