@@ -14,3 +14,4 @@ out.jpg
 
 *.db-journal
 /tests/TestFileList.txt
+/modules/resources/admin.txt
