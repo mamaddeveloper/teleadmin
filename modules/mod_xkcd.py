@@ -23,9 +23,17 @@ class ModuleXKCD(ModuleBase):
         response = requests.get('http://xkcd.com/'+stringNumber)#+ str(randint(1,1500)))
         parsed_body = html.fromstring(response.text)
         
-        image = parsed_body.xpath('//*[@id="comic"]/img/@src')
-        imageAlt = parsed_body.xpath('//*[@id="comic"]/img/@alt')
-        imageTitle = parsed_body.xpath('//*[@id="comic"]/img/@title')[0]
+        image = None# parsed_body.xpath('//*[@id="comic"]/img/@src')
+        imageAlt = None# parsed_body.xpath('//*[@id="comic"]/img/@alt')
+        imageTitle = None
+        try:
+            image = parsed_body.xpath('//*[@id="comic"]/img/@src')
+            imageAlt = parsed_body.xpath('//*[@id="comic"]/img/@alt')
+            imageTitle = parsed_body.xpath('//*[@id="comic"]/img/@title')[0]
+        except:
+            image = parsed_body.xpath('//*[@id="comic"]/a/img/@src')
+            imageAlt = parsed_body.xpath('//*[@id="comic"]/a/img/@alt')
+            imageTitle= parsed_body.xpath('//*[@id="comic"]/a/img/@title')[0]
         if(stringNumber == ""):
             ref = parsed_body.xpath("/html/body/div[2]/ul[2]/li[2]/a/@href")[0]
             if ref != "#":
