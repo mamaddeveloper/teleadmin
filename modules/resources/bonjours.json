@@ -1,0 +1,26 @@
+{
+    "madame": {
+        "title": "Bonjour madame.",
+        "xpath": "//div[@class=\"photo post\"]//img/@src",
+        "urls" : {
+            "random" : "http://www.bonjourmadame.fr/random",
+            "last" : "http://www.bonjourmadame.fr/"
+        }
+    },
+    "mademoiselle": {
+        "title": "Bonjour mademoiselle.",
+        "xpath": "//div[@class=\"photo\"]//img/@src",
+        "urls" : {
+            "random" : "http://www.bonjourmademoiselle.fr/random",
+            "last" : "http://www.bonjourmademoiselle.fr/"
+        }
+    },
+    "monsieur": {
+        "title": "Bonjour monsieur.",
+        "xpath": "//div[@class=\"img\"]/h1/img/@src",
+        "urls" : {
+            "random" : "http://www.bonjourmonsieur.fr/monsieur/random.html",
+            "last" : "http://www.bonjourmonsieur.fr/"
+        }
+    }
+}

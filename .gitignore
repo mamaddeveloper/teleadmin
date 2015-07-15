@@ -13,3 +13,6 @@ out.jpg
 /.idea
 
 *.db-journal
+/tests/TestFileList.txt
+/modules/resources/admin.txt
+bad.txt
