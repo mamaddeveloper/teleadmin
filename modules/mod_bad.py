@@ -19,3 +19,5 @@ class ModuleBadWords(ModuleBase):
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "bad":
             self.bad.add(commandStr)
+        elif commandName == "notbad":
+            self.bad.remove(commandStr)
