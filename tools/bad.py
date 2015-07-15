@@ -1,11 +1,9 @@
-from tools.lines import LinesAbstract
+from tools.fileList import FileList
 import re
-import codecs
 
 class Bad:
     def __init__(self, path):
-        self.path = path
-        self.lines = LinesAbstract(path).lines
+        self.lines = FileList(path)
 
     def bad(self, text):
         bads = []
@@ -25,9 +23,7 @@ class Bad:
             return
         word = word.lower()
         if word not in self.lines:
-            self.lines.append(word)
-            with codecs.open(self.path, "a", "UTF-8") as f:
-                f.write(word + "\n")
+            self.lines.add(word)
 
     def remove(self, word):
         if self.__invalid(word):
@@ -35,5 +31,3 @@ class Bad:
         word = word.lower()
         if word in self.lines:
             self.lines.remove(word)
-            with codecs.open(self.path, "w", "UTF-8") as f:
-                [f.write(w + "\n") for w in self.lines]
