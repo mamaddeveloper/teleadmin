@@ -208,9 +208,14 @@ class Bot:
         print(str(datetime.datetime.now().time()) + requestString)
         r = requests.get(requestString)
         try:
-            return r.json()
+            jsonResponse = r.json()
+            print(jsonResponse)
+            if jsonResponse['ok']:
+                return jsonResponse
+            else:
+                return {"result": list()}
         except:
-            return {'result': []}
+            return {"result": list()}
 
 
 if __name__ == "__main__":
