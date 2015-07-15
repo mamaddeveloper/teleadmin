@@ -13,3 +13,4 @@ out.jpg
 /.idea
 
 *.db-journal
+/tests/TestFileList.txt

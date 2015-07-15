@@ -3,6 +3,7 @@ import time
 import datetime
 from update import Update
 from tools.commandParser import CommandParser
+from tools.admin import AdminAll
 
 
 class Bot:
@@ -16,6 +17,7 @@ class Bot:
 
 
     def __init__(self, token, directoryName):
+        self.admin = AdminAll()
         self.directoryName = directoryName
         self.token = token
         self.last_update_id = 0

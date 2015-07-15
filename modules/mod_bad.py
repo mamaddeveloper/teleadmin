@@ -18,6 +18,14 @@ class ModuleBadWords(ModuleBase):
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "bad":
-            self.bad.add(commandStr)
+            if self.bot.admin.is_admin(from_attr):
+                self.bad.add(commandStr)
+                self.bot.sendMessage("Word added !")
+            else:
+                self.bot.sendMessage("You are not admin !", chat["id"])
         elif commandName == "notbad":
-            self.bad.remove(commandStr)
+            if self.bot.admin.is_admin(from_attr):
+                self.bad.remove(commandStr)
+                self.bot.sendMessage("Word removed !")
+            else:
+                self.bot.sendMessage("You are not admin !", chat["id"])
