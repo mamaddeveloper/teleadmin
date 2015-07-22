@@ -2,9 +2,7 @@ from modules.module_base import ModuleBase
 import requests
 from lxml import html
 from urllib.parse import urljoin
-from random import randint
 from urllib.request import urlretrieve
-
 
 class ModuleXKCD(ModuleBase):
     def __init__(self, bot):
@@ -39,3 +37,5 @@ class ModuleXKCD(ModuleBase):
                 self.getXKCDImage(chat["id"], "/random/comic", "c.")
             elif commandStr.isnumeric():
                 self.getXKCDImage(chat["id"], int(commandStr))
+            else:
+                self.bot.sendMessage("Bad arguments for xkcd", chat["id"])
