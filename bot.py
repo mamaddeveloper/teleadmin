@@ -201,23 +201,18 @@ class Bot:
 
     # creates a request "requestName", with each key, value pair from parameters as parameters
     def getJson(self, requestName, **parameters):
-        requestString = Bot.REQUEST_BASE + self.token + "/" + requestName + "?"
-        for key in parameters:
-            if parameters[key] is not None:
-                requestString = requestString + key + "=" + str(parameters[key]) + "&"
-        if requestString.endswith("&") or requestString.endswith("?"):
-            requestString = requestString[:-1]
-        print(str(datetime.datetime.now().time()) + requestString)
-        r = requests.get(requestString)
+        url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
+        print("%s %s" % (datetime.datetime.now().time(), url))
+        r = requests.post(url, parameters)
         try:
             jsonResponse = r.json()
             print(jsonResponse)
             if jsonResponse['ok']:
                 return jsonResponse
             else:
-                return {"result": list()}
+                return {"result": []}
         except:
-            return {"result": list()}
+            return {"result": []}
 
 
 if __name__ == "__main__":
