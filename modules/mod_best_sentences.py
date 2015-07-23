@@ -14,8 +14,11 @@ class ModuleDtc(ModuleBase):
         if commandName == "bs":
             if commandStr == "load":
                 if self.bot.admin.is_admin(from_attr):
-                    self.best_sentences.load()
-                    self.bot.sendMessage("Reloaded !", chat["id"])
+                    try:
+                        self.best_sentences.load()
+                        self.bot.sendMessage("Reloaded !", chat["id"])
+                    except BestSentencesLoadException:
+                        self.bot.sendMessage("Fail to load sentences.", chat["id"])
                 else:
                     self.bot.sendMessage("Access denied !", chat["id"])
             else:
