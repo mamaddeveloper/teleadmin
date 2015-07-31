@@ -2,6 +2,9 @@
 
 from server import Server
 from bot import Bot
+import json
+import logging
+import logging.config
 import os
 import os.path
 
@@ -20,6 +23,7 @@ def main():
     DIR = os.path.join(os.path.dirname(__file__), "botTest")
     TOCKEN_PATH = os.path.join(DIR, "token")
     UPDATES_LOG_PATH = os.path.join(DIR, "updates_log")
+    LOGGING_PATH = os.path.join(os.path.join(os.path.dirname(__file__), "botTest"), "config.json")
     purge, useWebhook, install = parse()
     if install != None:
         if not os.path.exists(DIR):
@@ -31,6 +35,13 @@ def main():
             f.write(install+"\n")
         print("End installing")
         return
+
+    if os.path.exists(LOGGING_PATH):
+        with open(LOGGING_PATH, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=logging.DEBUG)
 
     token = None
     with open(TOCKEN_PATH, 'r') as f:
@@ -54,8 +65,6 @@ def main():
         except KeyboardInterrupt:
             bot.stop()
             return
-    
 
 if __name__ == "__main__":
     main()
-    
