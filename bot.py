@@ -88,7 +88,7 @@ class Bot:
             if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
                 cmd = self.commandParser.parse(message.text)
                 if cmd.isValid :
-                    self.logger.info(message)
+                    self.logger.info("cmd %s", message.text)
                     if not cmd.isKnown:
                         self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
                         continue
@@ -135,7 +135,7 @@ class Bot:
             with open(file, 'r') as f:
                 for line in f:
                     self.listExclusion.append(line.rstrip())
-        self.logger.info("self.listExclusion = %s", self.listExclusion)
+        self.logger.info("listExclusion = %s", self.listExclusion)
 
     def getListModules(self):
         self.logger.info("Loading modules")

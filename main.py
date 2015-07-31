@@ -23,7 +23,7 @@ def main():
     DIR = os.path.join(os.path.dirname(__file__), "botTest")
     TOCKEN_PATH = os.path.join(DIR, "token")
     UPDATES_LOG_PATH = os.path.join(DIR, "updates_log")
-    LOGGING_PATH = os.path.join(os.path.join(os.path.dirname(__file__), "botTest"), "config.json")
+    LOGGING_PATH = os.path.join(os.path.join(os.path.dirname(__file__), "logs"), "config.json")
     purge, useWebhook, install = parse()
     if install != None:
         if not os.path.exists(DIR):
