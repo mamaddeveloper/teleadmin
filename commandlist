@@ -11,6 +11,7 @@ fetchsandwich - Fetches some sandwich. Optional keyword name
 help - Show help
 id - Get your id
 level - Get user level
+log - get log (admin only)
 op - Add new admin (admin only)
 noop - Remove admin (admin only)
 notbad - Remove bad word

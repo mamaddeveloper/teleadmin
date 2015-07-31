@@ -1,10 +1,9 @@
 import requests
 import time
-import datetime
+import logging
 from update import Update
 from tools.commandParser import CommandParser
 from tools.admin import AdminAll
-
 
 class Bot:
     REQUEST_BASE = "https://api.telegram.org/bot"
@@ -15,8 +14,8 @@ class Bot:
                                      "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"]
     LIST_MESSAGE_FORWARD_FIELDS = ["forward_from", "forward_date"]
 
-
     def __init__(self, token, directoryName):
+        self.logger = logging.getLogger(__name__)
         self.admin = AdminAll()
         self.directoryName = directoryName
         self.token = token
@@ -33,6 +32,7 @@ class Bot:
         self.initCommandList()
 
     def start(self, useWebhook=True, sleepingTime=2):
+        self.logger.info("starting")
         lines = []
         self.useWebhook = useWebhook
         self.shouldStopPolling = False
@@ -46,8 +46,10 @@ class Bot:
             while not self.shouldStopPolling:
                 self.getUpdates()
                 time.sleep(sleepingTime)
+        self.logger.info("started")
 
     def stop(self):
+        self.logger.info("stopping")
         self.shouldStopPolling = True
         lines = []
         with open(self.directoryName + "/updates_log", 'r') as f:
@@ -62,12 +64,14 @@ class Bot:
                 f.write("\n")
         for module in self.listModules:
             module.stop()
+        self.logger.info("stopped")
 
     def initCommandList(self):
         listStringCommands = None
         with open("commandlist", 'r') as f:
             listStringCommands = f.readlines()
         self.listCommands = [item.split(" ")[0] for item in listStringCommands if item != "" and item != None]
+        self.logger.debug("listCommands %s", repr(self.listCommands))
         self.commandParser = CommandParser(self.listCommands)
 
     @staticmethod
@@ -83,9 +87,11 @@ class Bot:
             message = update.message
             if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
                 cmd = self.commandParser.parse(message.text)
-                if cmd.isValid and not cmd.isKnown:
-                    self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
-                    continue
+                if cmd.isValid :
+                    self.logger.info(message)
+                    if not cmd.isKnown:
+                        self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
+                        continue
                 for module in self.listModules:
                     if cmd.isValid:
                         module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
@@ -129,10 +135,10 @@ class Bot:
             with open(file, 'r') as f:
                 for line in f:
                     self.listExclusion.append(line.rstrip())
+        self.logger.info("self.listExclusion = %s", self.listExclusion)
 
     def getListModules(self):
-
-        print("Loading modules: ")
+        self.logger.info("Loading modules")
         self.listModules = []
         import os
 
@@ -146,14 +152,15 @@ class Bot:
                 for item_name in dir(module):
                     try:
                         if "Module" in item_name and not "ModuleBase" in item_name:
-                            print(item_name)
+                            self.logger.debug("Loading module %s", item_name)
                             newModule = getattr(module, item_name)(self)
                             # here we have a newModule that is the instanciated class, do what you want with ;)
                             self.listModules.append(newModule)
-                    except Exception as e:
-                        print("Fail to load module %s : %s" % (a, e))
-            except ImportError as e:
-                print("Fail to load module %s : %s" % (a, e))
+                            self.logger.debug("Loaded module %s", item_name)
+                    except:
+                        self.logger.exception("Fail to load module %s", item_name, exc_info=True)
+            except:
+                self.logger.exception("Fail to load module %s", a, exc_info=True)
 
     # API methods
     def getMe(self):
@@ -170,9 +177,10 @@ class Bot:
     def setWebhook(self, url):
         self.getJson("setWebhook", url=url)
 
+    def sendDocument(self, chat_id, file_path):
+        self.postFile("sendDocument", data={"chat_id": chat_id}, files={"document": (file_path, open(file_path, "rb"))})
+
     def sendPhoto(self, chat_id, photoPath, caption=None, reply_to_message_id=None, reply_markup=None):
-        # self.getJson("sendPhoto", chat_id=chat_id, photo=photo, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
-        # self.postFile("sendPhoto", photo, chat_id=chat_id, caption=caption, reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
         self.sendPhotoDict(chat_id, photoPath, caption=caption, reply_to_message_id=reply_to_message_id,
                            reply_markup=reply_markup)
 
@@ -197,26 +205,23 @@ class Bot:
 
     def postFile(self, requestName, files, data):
         requestString = Bot.REQUEST_BASE + self.token + "/" + requestName
-        requests.post(requestString, data=data, files=files)
+        self.logger.info("postfile %s %s", requestString, data)
+        response = requests.post(requestString, data=data, files=files)
+        self.logger.info("postfile response %s %s", response, response.json())
 
     # creates a request "requestName", with each key, value pair from parameters as parameters
     def getJson(self, requestName, **parameters):
-        url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
-        print("%s %s" % (datetime.datetime.now().time(), url))
-        r = requests.post(url, parameters)
         try:
+            url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
+            self.logger.info("send %s %s", url, parameters)
+            r = requests.post(url, parameters)
             jsonResponse = r.json()
-            print(jsonResponse)
+            self.logger.info("recieve %s", jsonResponse)
             if jsonResponse['ok']:
                 return jsonResponse
             else:
+                self.logger.error("No ok response %s", jsonResponse)
                 return {"result": []}
         except:
+            self.logger.exception("fail to get response", exc_info=True)
             return {"result": []}
-
-
-if __name__ == "__main__":
-    token = None
-    with open("botTest/token", 'r') as f:
-        token = f.readline()[:-1]
-    bot = Bot(token, "botTest")

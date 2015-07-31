@@ -1,9 +1,10 @@
-from bot import Bot
+import logging
 
 class ModuleBase:
     def __init__(self, bot):
         self.name = "Piconche ne pige pas le python"
         self.bot = bot
+        self.logger = logging.getLogger(type(self).__name__)
 
     @staticmethod
     def checkForAttribute(object, attribute):

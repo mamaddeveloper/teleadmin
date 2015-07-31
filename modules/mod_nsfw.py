@@ -20,6 +20,7 @@ class ModuleNSFW(ModuleBase):
 
 
     def getBonjourImage(self, chatId, site, xpath_, message):
+        parsed_body = None
         try:
             response = requests.get(site)
             parsed_body = html.fromstring(response.text)
@@ -33,6 +34,7 @@ class ModuleNSFW(ModuleBase):
 
             self.bot.sendPhoto(chatId, "out.jpg", message)
         except:
+            self.logger.exception("Bonjour fail %s %s %s", site, xpath_, parsed_body, exc_info=True)
             self.bot.sendMessage("Fucking random website crash", chatId)
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):

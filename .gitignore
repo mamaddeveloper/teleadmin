@@ -17,3 +17,4 @@ out.jpg
 /modules/resources/admin.txt
 bad.txt
 admin.txt
+*.log
