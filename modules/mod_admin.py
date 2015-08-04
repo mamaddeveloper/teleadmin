@@ -38,7 +38,7 @@ class ModuleAdmin(ModuleBase):
                         self.logger.exception("Fail to flush handlers", exc_info=True)
                     self.bot.sendDocument(chat["id"], "logs/%s.log" % commandStr)
                 else:
-                    self.bot.sendMessage("Log %s unknown" % commandStr)
+                    self.bot.sendMessage("Log %s unknown" % commandStr, chat["id"])
 
         except NotAdminException:
             self.logger.warning("%s Not admin /%s %s", from_attr, commandName, commandStr)
