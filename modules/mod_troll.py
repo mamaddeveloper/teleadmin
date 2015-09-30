@@ -28,3 +28,8 @@ class ModuleTroll(ModuleBase):
             text = commandStr + " me report u\nHUEHUEHUEHUEHUE\nHUEHUEHUEHUEHUE\nHUEHUEHUEHUEHUE"        
             self.bot.sendMessage(text, chat["id"])
             self.reportedPeople.add(commandStr)
+
+    def get_commands(self):
+        return [
+            ("report", "Report someone. HUEHUEHUEHUE"),
+        ]

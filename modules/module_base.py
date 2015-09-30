@@ -62,5 +62,9 @@ class ModuleBase:
     def notify_group_chat_created(self, message_id, from_attr, date, chat, created):
         pass    
 
+    def get_commands(self):
+        self.logger.error("This module has not get_commandes implemented")
+        return ()
+
     def stop(self):
         pass

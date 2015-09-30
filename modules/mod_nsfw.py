@@ -61,3 +61,8 @@ class ModuleNSFW(ModuleBase):
                     self.getBonjourImage(chat["id"], bonjour["urls"][mode], xpath, bonjour["title"])
                 else:
                     self.bot.sendMessage("bonjour %s not found" % key, chat["id"])
+
+    def get_commands(self):
+        return [
+            ("bonjour", "Bonjour. Keywords: <madame/monsieur> <last/random>"),
+        ]

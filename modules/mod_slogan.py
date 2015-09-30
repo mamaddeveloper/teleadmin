@@ -13,3 +13,8 @@ class ModuleSlogan(ModuleBase):
         commandStr = commandStr.lower()
         if commandName == "slogan":
             self.bot.sendMessage(next(self.lines), chat["id"])
+
+    def get_commands(self):
+        return [
+            ("slogan", "Beau slogan"),
+        ]

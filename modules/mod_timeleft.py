@@ -39,3 +39,9 @@ class ModuleTimeleft(ModuleBase):
             else:
                 text = "Date %s inconnue" % commandStr
             self.bot.sendMessage(text, chat["id"])
+
+    def get_commands(self):
+        return [
+            ("date", "Get date"),
+            ("timeleft", "Time left"),
+        ]

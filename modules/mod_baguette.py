@@ -28,3 +28,9 @@ class ModuleBaguette(ModuleBase):
             self.users.add(commandStr)
         elif commandName == "sbag":
             self.users.remove(commandStr)
+
+    def get_commands(self):
+        return [
+            ("bag", "Add baguette"),
+            ("sbag", "Remove baguette"),
+        ]

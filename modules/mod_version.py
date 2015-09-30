@@ -21,3 +21,8 @@ class ModuleVersion(ModuleBase):
                 self.bot.sendMessage(text, chat["id"])
             except:
                 self.bot.sendMessage("Error getting version", chat["id"])
+
+    def get_commands(self):
+        return [
+            ("version", "Get bot version"),
+        ]

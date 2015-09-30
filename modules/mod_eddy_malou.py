@@ -25,3 +25,8 @@ class ModuleEddyMalou(ModuleBase):
                 text += random.choice(s)
                 text += " "
             self.bot.sendMessage(text, chat["id"])
+
+    def get_commands(self):
+        return [
+            ("eddy", "Eddy Malou"),
+        ]
