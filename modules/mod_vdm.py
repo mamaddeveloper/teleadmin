@@ -5,3 +5,8 @@ class ModuleVdm(ModuleBaseLastRandom):
 
     def __init__(self, bot):
         ModuleBaseLastRandom.__init__(self, bot, "ModuleVdm", "vdm", Vdm())
+
+    def get_commands(self):
+        return [
+            ("vdm", "VDM. Keywords : <last/random>"),
+        ]

@@ -48,3 +48,7 @@ class ModuleVote(ModuleBase):
         return "Résultat du vote '%s' : \nVotes pour : %d\nVotes contre : %d\nNombre votant : %d\nRésultat (%s) : %s (%.2f%%)" \
                % (vote.name, vote.votesFor, vote.votesAgainst, vote.voteCount, "définitif" if vote.end else "provisoir",  resultat, vote.rate * 100)
 
+    def get_commands(self):
+        return [
+            ("vote", "vote"),
+        ]

@@ -31,3 +31,8 @@ class ModuleDtc(ModuleBase):
 
                 except BestSentencesNotLoadedException:
                     self.bot.sendMessage("Module not loaded !", chat["id"])
+    def get_commands(self):
+        return [
+            ("bs", "Best sentences."),
+        ]
+

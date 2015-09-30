@@ -18,3 +18,9 @@ class ModuleChangeGroupName(ModuleBase):
             else:
                 text = "Bon appetit, %s" % from_attr["first_name"]
             self.bot.sendPhoto(chat["id"], "modules/resources/sandwich.jpg", text)
+
+    def get_commands(self):
+        return [
+            ("fetchbeer", "Fetches some beer."),
+            ("fetchsandwich", "Fetches some sandwich. Optional keyword name"),
+        ]

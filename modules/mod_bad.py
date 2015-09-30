@@ -29,3 +29,9 @@ class ModuleBadWords(ModuleBase):
                 self.bot.sendMessage("Word removed !")
             else:
                 self.bot.sendMessage("You are not admin !", chat["id"])
+
+    def get_commands(self):
+        return [
+            ("bad", "Add bad word"),
+            ("notbad", "Remove bad word"),
+        ]

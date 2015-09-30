@@ -43,3 +43,12 @@ class ModuleAdmin(ModuleBase):
         except NotAdminException:
             self.logger.warning("%s Not admin /%s %s", from_attr, commandName, commandStr)
             self.bot.sendMessage("Your are not admin !", chat["id"])
+
+    def get_commands(self):
+        return [
+            ("id", "Get your id"),
+            ("level", "Get user level"),
+            ("log", "get log (admin only)"),
+            ("op", "Add new admin (admin only)"),
+            ("noop", "Remove admin (admin only)"),
+        ]

@@ -17,3 +17,8 @@ class ModuleExplosm(ModuleBase):
                 ImageSender.send_image(self.bot, chat["id"], self.URL + "latest", self.XPATH, "Cyanide and Happiness")
             else:
                 self.bot.sendMessage("Command /%s %s unknown !" % (commandName, commandStr), chat["id"])
+
+    def get_commands(self):
+        return [
+            ("explosm", "Cyanide and Happiness. Keywords : <last/random>"),
+        ]

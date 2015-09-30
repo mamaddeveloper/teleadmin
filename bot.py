@@ -16,6 +16,11 @@ class Bot:
 
     def __init__(self, token, directoryName):
         self.logger = logging.getLogger(__name__)
+        self.useWebhook = None
+        self.shouldStopPolling = None
+        self.listCommands = None
+        self.listCommandsWithDesc = None
+        self.commandParser = None
         self.admin = AdminAll()
         self.directoryName = directoryName
         self.token = token
@@ -25,10 +30,6 @@ class Bot:
         self.loadLocalExclusion()
         self.getListModules()
 
-        self.useWebhook = None
-        self.shouldStopPolling = None
-        self.listCommands = None
-        self.commandParser = None
         self.initCommandList()
 
     def start(self, useWebhook=True, sleepingTime=2):
@@ -67,10 +68,6 @@ class Bot:
         self.logger.info("stopped")
 
     def initCommandList(self):
-        listStringCommands = None
-        with open("commandlist", 'r') as f:
-            listStringCommands = f.readlines()
-        self.listCommands = [item.split(" ")[0] for item in listStringCommands if item != "" and item != None]
         self.logger.debug("listCommands %s", repr(self.listCommands))
         self.commandParser = CommandParser(self.listCommands)
 
@@ -140,6 +137,7 @@ class Bot:
     def getListModules(self):
         self.logger.info("Loading modules")
         self.listModules = []
+        self.listCommandsWithDesc = []
         import os
 
         modules = [os.path.splitext(f)[0] for f in os.listdir("modules") if
@@ -156,11 +154,15 @@ class Bot:
                             newModule = getattr(module, item_name)(self)
                             # here we have a newModule that is the instanciated class, do what you want with ;)
                             self.listModules.append(newModule)
+                            self.listCommandsWithDesc.extend(newModule.get_commands())
                             self.logger.debug("Loaded module %s", item_name)
                     except:
                         self.logger.exception("Fail to load module %s", item_name, exc_info=True)
             except:
                 self.logger.exception("Fail to load module %s", a, exc_info=True)
+
+        self.listCommandsWithDesc.sort(key=lambda tup: tup[0])
+        self.listCommands = tuple([tup[0] for tup in self.listCommandsWithDesc])
 
     # API methods
     def getMe(self):

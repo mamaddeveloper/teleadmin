@@ -39,3 +39,8 @@ class ModuleXKCD(ModuleBase):
                 self.getXKCDImage(chat["id"], int(commandStr))
             else:
                 self.bot.sendMessage("Bad arguments for xkcd", chat["id"])
+
+    def get_commands(self):
+        return [
+            ("xkcd", "Get xkcd comics. Use with keywords: last, random or <number> "),
+        ]
