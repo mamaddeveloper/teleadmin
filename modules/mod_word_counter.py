@@ -50,10 +50,10 @@ class ModuleWordCounter(ModuleBase):
 
             self.bot.sendMessage(text, chat["id"])
 
-     def get_commands(self):
+    def get_commands(self):
         return [
-            ("wc", "Count words"),
-            ("WordCounter", "Count words"),
+        ("wc", "Count words"),
+        ("WordCounter", "Count words"),
         ]
 
 class Speaker:
