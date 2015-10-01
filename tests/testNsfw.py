@@ -12,7 +12,6 @@ class TestNsfw(unittest.TestCase):
     def test_parse(self):
         nsfw = Nsfw(logging.getLogger("TestNsfw"))
         for arg in self.PARSE_ARGS:
-
             res = nsfw.parse(arg[0])
             self.assertEqual(res.mode(), arg[1], "mode for '%s'" % arg[0])
             self.assertEqual(res.known(), arg[2], "known for '%s'" % arg[0])

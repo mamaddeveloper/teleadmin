@@ -18,17 +18,28 @@ class Nsfw:
     def image(self, key, mode, image_dest):
         parsed_body = None
         xpath = None
-        site = None
+        url = None
         try:
             bonjour = self.bonjours[key]
             if isinstance(bonjour["xpath"], str):
                 xpath = bonjour["xpath"]
             else:
                 xpath = bonjour["xpath"][mode]
-            site = bonjour["urls"][mode]
+            url = bonjour["urls"][mode]
             message = bonjour["title"]
 
-            response = requests.get(site)
+            response = None
+            loop = 5
+            while loop > 0:
+                response = requests.get(url, allow_redirects=False)
+                redirect = response.headers.get("location")
+                if redirect:
+                    url = urljoin(url, redirect)
+                    url = url.encode("Latin-1")
+                    url = url.decode("UTF-8")
+                    loop -= 1
+                else:
+                    loop = 0
             parsed_body = html.fromstring(response.text)
 
             image = parsed_body.xpath(xpath)
@@ -40,7 +51,7 @@ class Nsfw:
 
             return NsfwDownloadResult(True, message)
         except:
-            self.logger.exception("Bonjour fail %s %s %s", site, xpath, parsed_body, exc_info=True)
+            self.logger.exception("Bonjour fail %s %s %s", url, xpath, parsed_body, exc_info=True)
             return NsfwDownloadResult(False, "Fucking random website crash")
 
     def parse(self, commandStr):
