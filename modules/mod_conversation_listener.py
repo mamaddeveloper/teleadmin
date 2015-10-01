@@ -81,6 +81,3 @@ class ModuleConversationListener(ModuleBase):
     def stop(self):
         self.connexion.commit()
         self.connexion.close()
-
-    def get_commands(self):
-        return ()

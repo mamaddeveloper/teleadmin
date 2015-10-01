@@ -4,6 +4,7 @@ from tools.vote import *
 class ModuleVote(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
+        self.name = "ModuleVote"
         self.manager = VoteManager()
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):

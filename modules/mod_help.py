@@ -8,7 +8,8 @@ class ModuleHelp(ModuleBase):
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "help":
-            self.bot.sendMessage("\r\n".join(["/%s - %s" % (t[0], t[1]) for t in self.bot.listCommandsWithDesc]), chat["id"])
+            before = "" if commandStr == "telegram" else "/"
+            self.bot.sendMessage("\r\n".join(["%s%s - %s" % (before, t[0], t[1]) for t in self.bot.listCommandsWithDesc]), chat["id"])
 
     def get_commands(self):
         return [
