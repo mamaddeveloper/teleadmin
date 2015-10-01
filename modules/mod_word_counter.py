@@ -4,7 +4,7 @@ from modules.module_base import ModuleBase
 class ModuleWordCounter(ModuleBase):
 
     def __init__(self, bot):
-        ModuleBase__init__(self, bot)
+        ModuleBase.__init__(self, bot)
         self.name = "ModuleWordCounter"
         self.speakers = []
         self.dict = {}
@@ -14,7 +14,7 @@ class ModuleWordCounter(ModuleBase):
     #Example : \wc get Bilat gratuit
     #  --->    Bilat said 99 times : gratuit
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
-        if commandName == "WordCounter" or commandName == "wc" :
+        if commandName == "wordcounter" or commandName == "wc" :
 
             args = commandStr.split()
 
@@ -36,18 +36,18 @@ class ModuleWordCounter(ModuleBase):
 
             if action == "get" :
                 n = speaker.getExpressionCount(expression)
-                text = speaker.name + " said " + n + " times : " + expression
+                text = speaker.name + " said " + str(n) + " times : " + expression
             elif action == "set" :
                 #TODO
                 text = "Not implemented yet, sorry :-)"
             elif action == "add" :
                 n = speaker.getExpressionCount(expression)
                 speaker.setExpressionCount(expression, n+1)
-                text = speaker.name + "; " + expression + " : " + n + " -> " + n+1
+                text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n+1)
             elif action == "sub" :
                 n = speaker.getExpressionCount(expression)
                 speaker.setExpressionCount(expression, n-1)
-                text = speaker.name + "; " + expression + " : " + n + " -> " + n-1
+                text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n-1)
             else:
                 text = "Action parameter must be get,set,add or sub"
 
@@ -55,8 +55,8 @@ class ModuleWordCounter(ModuleBase):
 
     def get_commands(self):
         return [
-        ("wc", "Get or modify the number of times a word has been said by a speaker"),
-        ("WordCounter", "Get or modify the number of times a word has been said by a speaker"),
+            ("wc", "Get or modify the number of times a word has been said by a speaker"),
+            ("wordcounter", "Get or modify the number of times a word has been said by a speaker"),
         ]
 
 class Speaker:
