@@ -1,5 +1,6 @@
 from modules.module_base import ModuleBase
 
+#Module for counting words or expression said by teacher or other speaker
 class ModuleWordCounter(ModuleBase):
 
     def __init__(self, bot):
@@ -23,11 +24,13 @@ class ModuleWordCounter(ModuleBase):
             expressionLength = len(commandStr) - len(args[0]) - len(args[1]) - 2
             expression = commandStr[-expressionLength:] # The expression to count
 
+            #Gets the first speaker with the given name or, if this speaker doesn't exist yet, return None
             speaker = next((s for s in self.speakers if s.name == speakerName),None)
 
             text = ""
+            #If the speaker doesn't exist yet...
             if speaker is None :
-
+                #....Create it
                 speaker = Speaker(speakerName)
                 self.speakers.append(speaker)
 
@@ -52,8 +55,8 @@ class ModuleWordCounter(ModuleBase):
 
     def get_commands(self):
         return [
-        ("wc", "Count words"),
-        ("WordCounter", "Count words"),
+        ("wc", "Get or modify the number of times a word has been said by a speaker"),
+        ("WordCounter", "Get or modify the number of times a word has been said by a speaker"),
         ]
 
 class Speaker:
