@@ -21,7 +21,7 @@ class ModuleNSFW(ModuleBase):
                 result = self.nsfw.image(key, parserResult.mode(), "out.jpg")
                 if result.ok():
                     self.bot.sendPhoto(chat["id"], "out.jpg", result.message())
-					break
+                    break
                 else:
                     self.bot.sendMessage(result.message(), chat["id"])
 
