@@ -90,24 +90,33 @@ class Bot:
                         self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
                         continue
                 for module in self.listModules:
-                    if cmd.isValid:
-                        module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
-                    else:
-                        module.notify_text(message.message_id, message.from_attr, message.date, message.chat, message.text)
+                    try:
+                        if cmd.isValid:
+                            module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
+                        else:
+                            module.notify_text(message.message_id, message.from_attr, message.date, message.chat, message.text)
+                    except:
+                        self.logger.exception("Module '%s' crash (notify_text/notify_command)", module.name, exc_info=True)
                 continue
             for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
                 if Bot.checkForAttribute(message, forwardField):
                     for module in self.listModules:
-                        module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
-                                              message.forward_from, message.forward_date)
+                        try:
+                            module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
+                                                  message.forward_from, message.forward_date)
+                        except:
+                            self.logger.exception("Module '%s' crash (notify_forward)", module.name, exc_info=True)
                     continue
             for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
                 if Bot.checkForAttribute(message, optionnalField):
                     
                     for module in self.listModules:
-                        toCall = getattr(module, "notify_" + optionnalField)
-                        toCall(message.message_id, message.from_attr, message.date, message.chat,
+                        try:
+                            toCall = getattr(module, "notify_" + optionnalField)
+                            toCall(message.message_id, message.from_attr, message.date, message.chat,
                                getattr(message, optionnalField))
+                        except:
+                            self.logger.exception("Module '%s' crash (toCall)", module.name, exc_info=True)
                     continue
 
     # should not be used, since we're working using a webhook
