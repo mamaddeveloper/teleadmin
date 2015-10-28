@@ -15,7 +15,8 @@ class ModuleNSFW(ModuleBase):
                 self.bot.sendMessage(text, chat["id"])
                 return
             parserResult = self.nsfw.parse(commandStr)
-            self.bot.sendMessage("bonjour '%s' not found" % "', '".join(parserResult.unknown()), chat["id"])
+            if len(parserResult.unknown()) > 0:
+                self.bot.sendMessage("bonjour '%s' not found" % "', '".join(parserResult.unknown()), chat["id"])
             for key in parserResult.known():
                 result = self.nsfw.image(key, parserResult.mode(), "out.jpg")
                 if result.ok():
