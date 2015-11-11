@@ -207,6 +207,9 @@ class Bot:
         files = {'photo': (photoPath, open(photoPath, 'rb'))}
         self.postFile("sendPhoto", data=data, files=files)
 
+    def sendSticker(self, chat_id, sticker):
+        self.getJson("sendSticker", chat_id=chat_id, sticker=sticker)
+
     def setReplyKeyboardMarkup(self, keyboard):
         self.getJson("ReplyKeyboardMarkup", keyboard)
 
