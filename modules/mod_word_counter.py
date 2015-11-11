@@ -11,18 +11,18 @@ class ModuleWordCounter(ModuleBase):
 
     #Usage : \wc or \WordCounter action speakerName expression
     #Action can be : get, set, add, sub
-    #Example : \wc get Bilat gratuit
+    #Example : \wc Bilat get gratuit
     #  --->    Bilat said 99 times : gratuit
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "wordcounter" or commandName == "wc" :
 
             args = commandStr.split()
 
-            speakerName = args[0] # the one who said the expression to count
-            action = args[1] # get, set, add or sub
+            speakerName = args[0].lower() # the one who said the expression to count
+            action = args[1].lower() # get, set, add or sub
 
             expressionLength = len(commandStr) - len(args[0]) - len(args[1]) - 2
-            expression = commandStr[-expressionLength:] # The expression to count
+            expression = commandStr[-expressionLength:].lower() # The expression to count
 
             #Gets the first speaker with the given name or, if this speaker doesn't exist yet, return None
             speaker = next((s for s in self.speakers if s.name == speakerName),None)
