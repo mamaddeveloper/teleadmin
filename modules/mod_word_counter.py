@@ -7,22 +7,18 @@ class ModuleWordCounter(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleWordCounter"
         self.speakers = []
-        self.dict = {}
 
     #Usage : \wc or \WordCounter action speakerName expression
-    #Action can be : get, set, add, sub
+    #Action can be : get, set, add, sub, list
     #Example : \wc Bilat get gratuit
-    #  --->    Bilat said 99 times : gratuit
+    #  --->    bilat said 99 times : gratuit
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "wordcounter" or commandName == "wc" :
 
             args = commandStr.split()
 
             speakerName = args[0].lower() # the one who said the expression to count
-            action = args[1].lower() # get, set, add or sub
-
-            expressionLength = len(commandStr) - len(args[0]) - len(args[1]) - 2
-            expression = commandStr[-expressionLength:].lower() # The expression to count
+            action = args[1].lower() # get, set, add, sub or list
 
             #Gets the first speaker with the given name or, if this speaker doesn't exist yet, return None
             speaker = next((s for s in self.speakers if s.name == speakerName),None)
@@ -34,22 +30,34 @@ class ModuleWordCounter(ModuleBase):
                 speaker = Speaker(speakerName)
                 self.speakers.append(speaker)
 
-            if action == "get" :
-                n = speaker.getExpressionCount(expression)
-                text = speaker.name + " said " + str(n) + " times : " + expression
-            elif action == "set" :
-                #TODO
-                text = "Not implemented yet, sorry :-)"
-            elif action == "add" :
-                n = speaker.getExpressionCount(expression)
-                speaker.setExpressionCount(expression, n+1)
-                text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n+1)
-            elif action == "sub" :
-                n = speaker.getExpressionCount(expression)
-                speaker.setExpressionCount(expression, n-1)
-                text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n-1)
-            else:
-                text = "Action parameter must be get,set,add or sub"
+            if action == "list":
+
+                if len(speaker.expressionCounter.keys) > 0:
+                    for expres, count in speaker.expressionCounter.iteritems():
+                        text += expres + " -> " + count + "\n"
+                else:
+                    text = "No expression saved for this speaker"
+
+            else :
+                expressionLength = len(commandStr) - len(args[0]) - len(args[1]) - 2
+                expression = commandStr[-expressionLength:].lower() # The expression to count
+
+                if action == "get" :
+                    n = speaker.getExpressionCount(expression)
+                    text = speaker.name + " said " + str(n) + " times : " + expression
+                elif action == "set" :
+                    #TODO
+                    text = "Not implemented yet, sorry :-)"
+                elif action == "add" :
+                    n = speaker.getExpressionCount(expression)
+                    speaker.setExpressionCount(expression, n+1)
+                    text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n+1)
+                elif action == "sub" :
+                    n = speaker.getExpressionCount(expression)
+                    speaker.setExpressionCount(expression, n-1)
+                    text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n-1)
+                else:
+                    text = "Action parameter must be get,set,add, sub or list"
 
             self.bot.sendMessage(text, chat["id"])
 
