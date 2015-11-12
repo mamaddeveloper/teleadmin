@@ -24,7 +24,10 @@ class ModuleImageFetcher(ModuleBase):
                 searchTerm = args[0]
                 startIndex = 0
                 if len(args) > 1:
-                    startIndex = args[1]
+                    try:
+                        startIndex = int(args[1])
+                    except ValueError:
+                        pass
 
                 searchUrl = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + searchTerm + "&start=" + str(startIndex)
 
