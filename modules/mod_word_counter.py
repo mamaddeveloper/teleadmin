@@ -90,6 +90,8 @@ class ModuleWordCounter(ModuleBase):
             f.write(json.dumps([{"name": s.name, "expressionCounter" : s.expressionCounter} for s in self.speakers]))
 
     def load(self):
+        if not os.path.exists(self.FILE):
+            return
         with codecs.open(self.FILE, "r") as f:
             js = json.loads("".join(f.readlines()))
         for s in js:
