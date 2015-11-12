@@ -1,12 +1,16 @@
 from modules.module_base import ModuleBase
+import json
+import os.path
+import codecs
 
 #Module for counting words or expression said by teacher or other speaker
 class ModuleWordCounter(ModuleBase):
-
+    FILE = os.path.join(os.path.dirname(__file__), "../botTest/WordCounter.txt")
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleWordCounter"
         self.speakers = []
+        self.load()
 
     #Usage : /wc or /WordCounter action speakerName expression
     #Action can be : get, set, add, sub, list
@@ -56,25 +60,44 @@ class ModuleWordCounter(ModuleBase):
                         n = speaker.getExpressionCount(expression)
                         speaker.setExpressionCount(expression, n+1)
                         text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n+1)
+                        self.save()
                     elif action == "sub" :
                         n = speaker.getExpressionCount(expression)
                         speaker.setExpressionCount(expression, n-1)
                         text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n-1)
+                        self.save()
                     else:
                         text = "Action parameter must be get,set,add, sub or list"
 
+            elif commandStr.lower() == "clear" and self.bot.admin.is_admin(from_attr):
+                self.speakers = []
+                self.save()
+                text = "Cleared !"
+                pass
             else:
                 text = "Not enough argument, usage : /wc action speakerName [expression]"
 
             self.bot.sendMessage(text, chat["id"])
-
-
 
     def get_commands(self):
         return [
             ("wc", "Get or modify the number of times a word has been said by a speaker"),
             ("wordcounter", "Get or modify the number of times a word has been said by a speaker"),
         ]
+
+    def save(self):
+        with codecs.open(self.FILE, "w") as f:
+            f.write(json.dumps([{"name": s.name, "expressionCounter" : s.expressionCounter} for s in self.speakers]))
+
+    def load(self):
+        if not os.path.exists(self.FILE):
+            return
+        with codecs.open(self.FILE, "r") as f:
+            js = json.loads("".join(f.readlines()))
+        for s in js:
+            speaker = Speaker(s["name"])
+            speaker.expressionCounter = s["expressionCounter"]
+            self.speakers.append(speaker)
 
 class Speaker:
     def __init__(self, _name):
