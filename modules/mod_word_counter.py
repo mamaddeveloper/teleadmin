@@ -33,7 +33,7 @@ class ModuleWordCounter(ModuleBase):
             if action == "list":
 
                 if len(speaker.expressionCounter) > 0:
-                    for expres, count in speaker.expressionCounter.iteritems():
+                    for expres, count in speaker.expressionCounter.items():
                         text += expres + " -> " + count + "\n"
                 else:
                     text = "No expression saved for this speaker"
