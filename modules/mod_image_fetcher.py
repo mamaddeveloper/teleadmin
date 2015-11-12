@@ -1,6 +1,7 @@
 from modules.module_base import ModuleBase
 import urllib.request
 import json
+import random
 
 #Module for fecthing an image on Google Image
 class ModuleImageFetcher(ModuleBase):
@@ -9,27 +10,38 @@ class ModuleImageFetcher(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleImageFetcher"
 
-    #Usage : /img query [index]
-    #Example : /img cara 2
+    #Usage : /img query [--index | --random]
+    #Example : /img cara -2
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "img":
 
             args = commandStr.split()
 
-            text = ""
             if len(args) > 0:
 
-                fetcher = urllib.request.build_opener()
-                #TODO multiple words search term
-                searchTerm = args[0]
+                searchTerm = ""
                 startIndex = 0
-                if len(args) > 1:
-                    try:
-                        startIndex = int(args[1])
-                    except ValueError:
-                        pass
+
+                #If the last argument start with "-", it means that it's an index parameter
+                if args[-1][0] == "-":
+
+                    #So the search query is composed by every argument but the last one
+                    searchTerm = "%20".join(args[:-1]) # %20 -> espace
+
+                    #Check if it's a random or a value
+                    if args[-1] == "-random" or args[-1] == "-r":
+                        startIndex = random.randint(0,50); #TODO put this values in a variable
+                    else:
+                        try:
+                            startIndex = int(args[-1][1:])
+                        except ValueError:
+                            pass
+                #Otherwise, the start index is still 0 and all the arguments are part of the search query
+                else:
+                    searchTerm = "%20".join(args) # %20 -> espace
 
                 searchUrl = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + searchTerm + "&start=" + str(startIndex)
+                print("searchUrl : " + searchUrl)
 
                 response = urllib.request.urlopen(searchUrl)
 
@@ -37,13 +49,13 @@ class ModuleImageFetcher(ModuleBase):
                 objJSON = json.loads(str_response)
 
                 imageUrl = objJSON['responseData']['results'][0]['unescapedUrl']
-                text = imageUrl
+                print("Image URL : " + imageUrl)
 
                 urllib.request.urlretrieve(imageUrl, "out.jpg")
-                self.bot.sendPhoto(chat["id"], "out.jpg", args[0])
+                self.bot.sendPhoto(chat["id"], "out.jpg", " ".join(searchTerm.split("%20")))
 
             else:
-                self.bot.sendMessage("Not enough argument, usage : /img query [index]", chat["id"])
+                self.bot.sendMessage("Not enough argument, usage : /img query [-index | -random]", chat["id"])
 
     def get_commands(self):
         return [
