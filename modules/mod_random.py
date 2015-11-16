@@ -12,7 +12,7 @@ class ModuleRandom(ModuleBase):
         self.name = "ModuleRandom"
         self.nsfw = Nsfw(self.logger)
 
-    def random(self, a, b, commandStr, chat):
+    def random(self, a, b, commandStr, chat, from_attr):
         print("Raddnom a:%d b:%d cs:%s" % (a, b, commandStr))
         try:
             n = int(commandStr)
@@ -31,15 +31,15 @@ class ModuleRandom(ModuleBase):
                         else:
                             self.bot.sendMessage(result.message(), chat["id"])
                 else:
-                    self.bot.sendMessage("You loose ! (%d)" % c, chat["id"])
+                    self.bot.sendMessage("%s : %d\nBot : %d\nYou loose !" % (from_attr["first_name"], n, c), chat["id"])
         except ValueError:
             self.error_msg(chat, a, b)
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "random":
-            self.random(self.RANDOM_MIN, self.RANDOM_MAX, commandStr, chat)
+            self.random(self.RANDOM_MIN, self.RANDOM_MAX, commandStr, chat, from_attr)
         elif commandName == "randomchallenger":
-            self.random(self.CHALLENGE_MIN, self.CHALLENGE_MAX, commandStr, chat)
+            self.random(self.CHALLENGE_MIN, self.CHALLENGE_MAX, commandStr, chat, from_attr)
 
     def error_msg(self, chat, a, b):
         self.bot.sendMessage("Value must be a int between %d and %d !" % (a, b), chat["id"])
