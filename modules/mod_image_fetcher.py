@@ -2,6 +2,7 @@ from modules.module_base import ModuleBase
 import urllib.request
 import json
 import random
+from tools.limitator import Limitator, LimitatorLimitted
 
 #Module for fecthing an image on Google Image
 class ModuleImageFetcher(ModuleBase):
@@ -9,6 +10,7 @@ class ModuleImageFetcher(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleImageFetcher"
+        self.limitator = Limitator(10, 300, True)
 
     #Usage : /img query [--index | --random]
     #Example : /img cara -2
@@ -18,7 +20,11 @@ class ModuleImageFetcher(ModuleBase):
             args = commandStr.split()
 
             if len(args) > 0:
-
+                try:
+                    self.limitator.next(from_attr)
+                except LimitatorLimitted:
+                    self.bot.sendMessage("Tu as abusé, réssaye plus tard !", chat["id"])
+                    return
                 searchTerm = ""
                 startIndex = 0
 

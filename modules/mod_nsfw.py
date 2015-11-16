@@ -1,5 +1,7 @@
 from modules.module_base import ModuleBase
 from tools.nsfw import Nsfw
+from tools.limitator import Limitator, LimitatorLimitted
+
 
 
 class ModuleNSFW(ModuleBase):
@@ -7,6 +9,7 @@ class ModuleNSFW(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "NSFW"
         self.nsfw = Nsfw(self.logger)
+        self.limitator = Limitator(5, 60, True)
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "bonjour":
@@ -17,12 +20,17 @@ class ModuleNSFW(ModuleBase):
             parserResult = self.nsfw.parse(commandStr)
             if len(parserResult.unknown()) > 0:
                 self.bot.sendMessage("bonjour '%s' not found" % "', '".join(parserResult.unknown()), chat["id"])
-            for key in parserResult.known():
-                result = self.nsfw.image(key, parserResult.mode(), "out.jpg")
-                if result.ok():
-                    self.bot.sendPhoto(chat["id"], "out.jpg", result.message())
-                else:
-                    self.bot.sendMessage(result.message(), chat["id"])
+            try:
+                for key in parserResult.known():
+                    self.limitator.next(from_attr)
+                    result = self.nsfw.image(key, parserResult.mode(), "out.jpg")
+                    if result.ok():
+                        self.bot.sendPhoto(chat["id"], "out.jpg", result.message())
+                    else:
+                        self.bot.sendMessage(result.message(), chat["id"])
+            except LimitatorLimitted:
+                self.bot.sendMessage("N'abuse pas mon petit cochon !", chat["id"])
+
 
     def get_commands(self):
         return [

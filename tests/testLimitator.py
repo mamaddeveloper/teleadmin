@@ -67,5 +67,18 @@ class TestLimitator(unittest.TestCase):
         except LimitatorLimitted:
             pass
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_5(self):
+        l = Limitator(1, 61, True)
+        l.next(self.USER1)
+        try:
+            l.next(self.USER1)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+        time.sleep(62)
+        l.next(self.USER1)
+        try:
+            l.next(self.USER1)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
