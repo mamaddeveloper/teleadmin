@@ -54,12 +54,14 @@ class ModuleImageFetcher(ModuleBase):
                 str_response = response.read().decode('utf-8')
                 objJSON = json.loads(str_response)
 
-                imageUrl = objJSON['responseData']['results'][0]['unescapedUrl']
-                print("Image URL : " + imageUrl)
+                if len(objJSON['responseData']['results']) > 0:
+                    imageUrl = objJSON['responseData']['results'][0]['unescapedUrl']
+                    print("Image URL : " + imageUrl)
 
-                urllib.request.urlretrieve(imageUrl, "out.jpg")
-                self.bot.sendPhoto(chat["id"], "out.jpg", " ".join(searchTerm.split("%20")))
-
+                    urllib.request.urlretrieve(imageUrl, "out.jpg")
+                    self.bot.sendPhoto(chat["id"], "out.jpg", " ".join(searchTerm.split("%20")))
+                else:
+                    self.bot.sendMessage("Désolé mon petit %s, aucune image trouvé pour %s" % (from_attr['first_name'], searchTerm), chat["id"])
             else:
                 self.bot.sendMessage("Not enough argument, usage : /img query [-index | -random]", chat["id"])
 
