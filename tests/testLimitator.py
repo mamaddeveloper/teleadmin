@@ -82,3 +82,13 @@ class TestLimitator(unittest.TestCase):
             self.fail("must crash")
         except LimitatorLimitted:
             pass
+
+    def test_6(self):
+        l = Limitator(5, 2, True)
+        l.next(self.USER1, 3)
+        try:
+            l.next(self.USER1, 3)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+        l.next(self.USER1, 2)
