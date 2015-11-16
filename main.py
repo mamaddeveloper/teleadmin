@@ -17,13 +17,16 @@ def parse():
     parser.add_argument("--install", help="install with tocken", type=str, metavar='TOCKEN')
     args = parser.parse_args()
     return args.purge, args.webhook, args.install
-    
+
+
 
 def main():
     DIR = os.path.join(os.path.dirname(__file__), "botTest")
     TOCKEN_PATH = os.path.join(DIR, "token")
     UPDATES_LOG_PATH = os.path.join(DIR, "updates_log")
     LOGGING_PATH = os.path.join(os.path.join(os.path.dirname(__file__), "logs"), "config.json")
+    PRIVATE_KEY_PATH = os.path.join(os.path.dirname(__file__), "botTest/private.key")
+    PUBLIC_KEY_PATH = os.path.join(os.path.dirname(__file__), "botTest/public.pem")
     purge, useWebhook, install = parse()
     if install != None:
         if not os.path.exists(DIR):
@@ -54,9 +57,13 @@ def main():
         bot.stop()
         return
     if useWebhook:
-        bot.setWebhook(useWebhook)
-        server = Server()
-        server.addBot(bot)
+        if not os.path.exists(PUBLIC_KEY_PATH):
+            print("No public key, please run ssl.sh before !")
+            return
+        if not os.path.exists(PRIVATE_KEY_PATH):
+            print("No private key, please run ssl.sh before !")
+            return
+        server = Server(bot, PUBLIC_KEY_PATH, PRIVATE_KEY_PATH)
         server.run()
     else:
         bot.setWebhook("")

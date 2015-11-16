@@ -185,8 +185,12 @@ class Bot:
     def forwardMessage(self, chat_id, from_chat_id, message_id):
         self.getJson("forwardMessage", chat_id=chat_id, from_chat_id=from_chat_id, message_id=message_id)
 
-    def setWebhook(self, url):
-        self.getJson("setWebhook", url=url)
+    def setWebhook(self, url, certificate=None):
+        if certificate:
+            #with open(certificate, "r") as f:
+            #    certificate = "".join([l.strip() for l in f.readlines()])
+            certificate =  open(certificate, "r")
+        self.postFile("setWebhook", url=url, certificate=certificate)
 
     def sendDocument(self, chat_id, file_path):
         self.postFile("sendDocument", data={"chat_id": chat_id}, files={"document": (file_path, open(file_path, "rb"))})
