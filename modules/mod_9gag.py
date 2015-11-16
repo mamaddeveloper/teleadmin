@@ -24,7 +24,7 @@ class Module9GAG(ModuleBase):
 
             self.bot.sendPhoto(chat, "out.jpg", imageAlt)
         except Exception as e:
-            print(e)
+            self.logger.exception("9gag error", exc_info=True)
             self.bot.sendMessage("9gag error", chat)
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):

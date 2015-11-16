@@ -26,7 +26,7 @@ class ModuleXKCD(ModuleBase):
             self.bot.sendPhoto(chat, "out.jpg", imageAlt)
             self.bot.sendMessage(imageTitle, chat)
         except Exception as e:
-            print(e)
+            self.logger.exception("xkcd error", exc_info=True)
             self.bot.sendMessage("xkcd error", chat)
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
