@@ -10,7 +10,7 @@ class ModuleImageFetcher(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleImageFetcher"
-        self.limitator = Limitator(10, 300, True)
+        self.limitator = Limitator(10, 900, True)
 
     #Usage : /img query [--index | --random]
     #Example : /img cara -2
