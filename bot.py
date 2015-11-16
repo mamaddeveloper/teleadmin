@@ -226,16 +226,20 @@ class Bot:
     # creates a request "requestName", with each key, value pair from parameters as parameters
     def getJson(self, requestName, **parameters):
         try:
-            url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
-            self.logger.info("send %s %s", url, parameters)
-            r = requests.post(url, parameters)
-            jsonResponse = r.json()
-            self.logger.info("recieve %s", jsonResponse)
-            if jsonResponse['ok']:
-                return jsonResponse
-            else:
-                self.logger.error("No ok response %s", jsonResponse)
-                return {"result": []}
+            while True:
+                url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
+                self.logger.info("send %s %s", url, parameters)
+                r = requests.post(url, parameters)
+                jsonResponse = r.json()
+                self.logger.info("recieve %s", jsonResponse)
+                if jsonResponse['ok']:
+                    return jsonResponse
+                else:
+                    self.logger.error("No ok response %s", jsonResponse)
+                    if jsonResponse["error_code"] != 429:
+                        return {"result": []}
+                    self.logger.warning("Wait + loop")
+                    time.sleep(30)
         except:
             self.logger.exception("fail to get response", exc_info=True)
             return {"result": []}

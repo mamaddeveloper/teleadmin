@@ -23,7 +23,7 @@ class ModuleRandom(ModuleBase):
                 print("b = %d" % c)
                 if c == n:
                     image_type = random.choice(list(self.nsfw.bonjours.keys()))
-                    self.bot.sendMessage("You win, getting %d %s\nYou are such a coquin" % (n, image_type), chat["id"])
+                    self.bot.sendMessage("%s win, getting %d %s\nYou are such a coquin" % (from_attr["first_name"], n, image_type), chat["id"])
                     for i in range(n):
                         result = self.nsfw.image(image_type, "random", "out.jpg")
                         if result.ok():
