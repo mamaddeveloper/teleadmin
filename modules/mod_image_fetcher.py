@@ -46,7 +46,7 @@ class ModuleImageFetcher(ModuleBase):
                 else:
                     searchTerm = "%20".join(args) # %20 -> espace
 
-                searchUrl = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + searchTerm + "&start=" + str(startIndex)
+                searchUrl = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + searchTerm + "&start=" + str(startIndex)
                 print("searchUrl : " + searchUrl)
 
                 response = urllib.request.urlopen(searchUrl)
