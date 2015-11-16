@@ -39,7 +39,5 @@ class ModuleRage(ModuleBase):
 
     def get_commands(self):
         return [
-            ("rage", "Eh bah, ça rage du cul ?"),
-            ("rage", "add <rage template with '$' placeholder>"),
-            ("rage", "<thing against you rage"),
+            ("rage", "Eh bah, ça rage du cul ? Keyword: add <rage template with '$' placeholder> | <thing against you rage>"),
         ]
