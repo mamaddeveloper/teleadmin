@@ -10,7 +10,7 @@ class ModuleAss(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleAss"
         self.Url = "http://api.obutts.ru/noise/1"
-        self.mediaUrl = "http://media.obutts.ru/"
+        self.mediaUrl = "http://media.obutts.ru"
         self.limitator = LimitatorMultiple(
             Limitator(5, 60, True),
             Limitator(50, 600, False),
@@ -29,11 +29,10 @@ class ModuleAss(ModuleBase):
             print(objJSON)
             imgPath = objJSON[0]['preview']
             if len(imgPath) > 0:
-                urllib.request.urlretrieve(self.mediaUrl + "/" + imgPath, "out.jpg")
-                self.bot.sendPhoto(chat["id"], "out.jpg", "Et un petit cul pour %s !" % from_attr["first_name"])
+                url = self.mediaUrl + "/" + imgPath
+                self.bot.sendPhotoUrl(chat["id"], url, "Et un petit cul pour %s !" % from_attr["first_name"])
 
     def get_commands(self):
         return [
             ("ass", "Random pretty ass on demand"),
         ]
-

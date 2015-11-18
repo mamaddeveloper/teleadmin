@@ -21,9 +21,7 @@ class ModuleXKCD(ModuleBase):
             # Convert any relative urls to absolute urls
             image = urljoin(response.url, image[0])
 
-            urlretrieve(image, "out.jpg") #works with static address
-
-            self.bot.sendPhoto(chat, "out.jpg", imageAlt)
+            self.bot.sendPhotoUrl(chat, image, imageAlt)
             self.bot.sendMessage(imageTitle, chat)
         except Exception as e:
             self.logger.exception("xkcd error", exc_info=True)
