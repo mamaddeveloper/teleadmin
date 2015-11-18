@@ -1,6 +1,8 @@
 from modules.module_base import ModuleBase
 from tools.nsfw import Nsfw
 import random
+from tools.lines import LinesSeqRnd
+
 
 class ModuleRandom(ModuleBase):
     RANDOM_MIN = 1
@@ -11,18 +13,17 @@ class ModuleRandom(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleRandom"
         self.nsfw = Nsfw(self.logger)
+        self.images_type = LinesSeqRnd(list(self.nsfw.bonjours.keys()))
 
     def random(self, a, b, commandStr, chat, from_attr):
-        print("Raddnom a:%d b:%d cs:%s" % (a, b, commandStr))
         try:
             n = int(commandStr)
             if n > b or n < a:
                 self.error_msg(chat, a, b)
             else:
                 c = random.randint(a, b)
-                print("b = %d" % c)
                 if c == n:
-                    image_type = random.choice(list(self.nsfw.bonjours.keys()))
+                    image_type = next(self.images_type)
                     self.bot.sendMessage("%s win, getting %d %s\nYou are such a coquin" % (from_attr["first_name"], n, image_type), chat["id"])
                     for i in range(n):
                         result = self.nsfw.image(image_type, "random")

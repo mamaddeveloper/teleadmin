@@ -6,9 +6,6 @@ class TestLines(unittest.TestCase):
     FILE = os.path.join(os.path.dirname(__file__), "../modules/resources/bag.txt")
     N = 100
 
-    def test_LinesRnd(self):
-        self.do_test(lines.LinesRnd)
-
     def test_LinesSeq(self):
         self.do_test(lines.LinesSeq)
 
@@ -17,5 +14,8 @@ class TestLines(unittest.TestCase):
 
     def do_test(self, cl):
         l = cl(self.FILE)
+        for i in range(self.N):
+            self.assertTrue(len(next(l)) > 0)
+        l = cl(range(self.N/10))
         for i in range(self.N):
             self.assertTrue(len(next(l)) > 0)
