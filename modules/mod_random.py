@@ -13,7 +13,7 @@ class ModuleRandom(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleRandom"
         self.nsfw = Nsfw(self.logger)
-        self.images_type = LinesSeqRnd(list(self.nsfw.bonjours.keys()))
+        self.images_type = LinesSeqRnd([i for i in self.nsfw.bonjours.keys() if i != "monsieur"])
 
     def random(self, a, b, commandStr, chat, from_attr):
         try:
