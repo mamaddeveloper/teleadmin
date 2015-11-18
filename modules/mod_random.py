@@ -13,7 +13,7 @@ class ModuleRandom(ModuleBase):
         ModuleBase.__init__(self, bot)
         self.name = "ModuleRandom"
         self.nsfw = Nsfw(self.logger)
-        self.images_type = LinesSeqRnd([i for i in self.nsfw.bonjours.keys() if i != "monsieur"])
+        self.images_type = list([i for i in self.nsfw.bonjours.keys() if i != "monsieur"])
 
     def random(self, a, b, commandStr, chat, from_attr):
         try:
@@ -23,9 +23,9 @@ class ModuleRandom(ModuleBase):
             else:
                 c = random.randint(a, b)
                 if c == n:
-                    image_type = next(self.images_type)
-                    self.bot.sendMessage("%s win, getting %d %s\nYou are such a coquin" % (from_attr["first_name"], n, image_type), chat["id"])
+                    self.bot.sendMessage("%s win\nYou are such a coquin" % from_attr["first_name"], chat["id"])
                     for i in range(n):
+                        image_type = random.choice(self.images_type)
                         result = self.nsfw.image(image_type, "random")
                         if result.ok():
                             self.bot.sendPhotoUrl(chat["id"], result.url(), result.message())
