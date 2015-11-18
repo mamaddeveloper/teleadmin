@@ -16,6 +16,6 @@ class TestLines(unittest.TestCase):
         l = cl(self.FILE)
         for i in range(self.N):
             self.assertTrue(len(next(l)) > 0)
-        l = cl(range(self.N/10))
+        l = cl(["line %d" % i for i in range(int(self.N/10))])
         for i in range(self.N):
             self.assertTrue(len(next(l)) > 0)
