@@ -25,9 +25,9 @@ class ModuleRandom(ModuleBase):
                     image_type = random.choice(list(self.nsfw.bonjours.keys()))
                     self.bot.sendMessage("%s win, getting %d %s\nYou are such a coquin" % (from_attr["first_name"], n, image_type), chat["id"])
                     for i in range(n):
-                        result = self.nsfw.image(image_type, "random", "out.jpg")
+                        result = self.nsfw.image(image_type, "random")
                         if result.ok():
-                            self.bot.sendPhoto(chat["id"], "out.jpg", result.message())
+                            self.bot.sendPhotoUrl(chat["id"], result.url(), result.message())
                         else:
                             self.bot.sendMessage(result.message(), chat["id"])
                 else:

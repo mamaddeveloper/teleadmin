@@ -24,9 +24,9 @@ class ModuleNSFW(ModuleBase):
             try:
                 for key in parserResult.known():
                     self.limitator.next(from_attr)
-                    result = self.nsfw.image(key, parserResult.mode(), "out.jpg")
+                    result = self.nsfw.image(key, parserResult.mode())
                     if result.ok():
-                        self.bot.sendPhoto(chat["id"], "out.jpg", result.message())
+                        self.bot.sendPhotoUrl(chat["id"], result.url(), result.message())
                     else:
                         self.bot.sendMessage(result.message(), chat["id"])
             except LimitatorLimitted:
