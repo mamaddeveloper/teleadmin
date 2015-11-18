@@ -209,7 +209,7 @@ class Bot:
 
     def sendPhotoUrl(self, chat_id, photo_url, capiton=None, reply_to_message_id=None, reply_markup=None):
         try:
-            response = requests.get(photo_url, stream=True)
+            response = requests.get(photo_url, stream=True, timeout=5)
             with open("out.jpg", "wb") as f:
                 for block in response.iter_content(1024):
                     f.write(block)
