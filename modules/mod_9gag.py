@@ -2,7 +2,6 @@ from modules.module_base import ModuleBase
 import requests
 from lxml import html
 from urllib.parse import urljoin
-from urllib.request import urlretrieve
 
 class Module9GAG(ModuleBase):
     def __init__(self, bot):
@@ -20,9 +19,7 @@ class Module9GAG(ModuleBase):
             # Convert any relative urls to absolute urls
             image = urljoin(response.url, image[0])
 
-            urlretrieve(image, "out.jpg") #works with static address
-
-            self.bot.sendPhoto(chat, "out.jpg", imageAlt)
+            self.bot.sendPhotoUrl(chat, image, imageAlt)
         except Exception as e:
             self.logger.exception("9gag error", exc_info=True)
             self.bot.sendMessage("9gag error", chat)

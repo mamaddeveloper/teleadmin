@@ -207,6 +207,18 @@ class Bot:
         files = {'photo': (photoPath, open(photoPath, 'rb'))}
         self.postFile("sendPhoto", data=data, files=files)
 
+    def sendPhotoUrl(self, chat_id, photo_url, capiton=None, reply_to_message_id=None, reply_markup=None):
+        try:
+            response = requests.get(photo_url, stream=True)
+            with open("out.jpg", "wb") as f:
+                for block in response.iter_content(1024):
+                    f.write(block)
+            self.sendPhoto(chat_id, "out.jpg", capiton, reply_to_message_id, reply_markup)
+        except:
+            self.logger.exception("Fail to download and send image %s", photo_url, exc_info=True)
+            return False
+        return True
+
     def sendSticker(self, chat_id, sticker):
         self.getJson("sendSticker", chat_id=chat_id, sticker=sticker)
 
