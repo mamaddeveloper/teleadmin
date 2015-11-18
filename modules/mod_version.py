@@ -15,12 +15,13 @@ class ModuleVersion(ModuleBase):
             try:
                 text = ""
                 text += "Python version %s\n" % platform.python_version()
+                text += "Running on %s\n" % platform.node()
                 text += subprocess.check_output(["git","remote", "-v"], cwd=self.PATH).decode("utf-8")
                 text += subprocess.check_output(["git","log", "-1"], cwd=self.PATH).decode("utf-8")
-                print(type(text))
                 self.bot.sendMessage(text, chat["id"])
             except:
                 self.bot.sendMessage("Error getting version", chat["id"])
+                self.logger.exception("Error getting version", exc_info=True)
 
     def get_commands(self):
         return [
