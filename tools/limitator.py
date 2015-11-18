@@ -3,7 +3,14 @@ from datetime import datetime
 from datetime import timedelta
 
 
-class Limitator:
+class ILimitator:
+    def clear(self):
+        raise NotImplementedError()
+
+    def next(self, user, amout=1):
+        raise NotImplementedError()
+
+class Limitator(ILimitator):
     ALL_USER = {"id": -1}
 
     def __init__(self, per_time_unit, time_unit_seconds, per_user=False):
@@ -63,6 +70,26 @@ class LimitatorUser:
     @staticmethod
     def get_user_id(user):
         return user["id"]
+
+
+class LimitatorMultiple(ILimitator):
+    def __init__(self, *args):
+        [is_type(ILimitator, a, "args") for a in args]
+        self.limitators = list(args)
+
+    def next(self, user, amout=1):
+        error = False
+        for limitator in self.limitators:
+            try:
+                limitator.next(user, amout)
+            except LimitatorLimitted:
+                error = True
+        if error:
+            raise LimitatorLimitted()
+
+    def clear(self):
+        for limitator in self.limitators:
+            limitator.clear()
 
 
 class LimitatorLimitted(Exception): pass
