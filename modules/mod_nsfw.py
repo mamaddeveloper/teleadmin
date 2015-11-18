@@ -1,15 +1,16 @@
 from modules.module_base import ModuleBase
 from tools.nsfw import Nsfw
-from tools.limitator import Limitator, LimitatorLimitted
-
-
+from tools.limitator import Limitator, LimitatorLimitted, LimitatorMultiple
 
 class ModuleNSFW(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
         self.name = "NSFW"
         self.nsfw = Nsfw(self.logger)
-        self.limitator = Limitator(5, 60, True)
+        self.limitator = LimitatorMultiple(
+            Limitator(5, 60, True),
+            Limitator(50, 600, False),
+        )
 
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "bonjour":
