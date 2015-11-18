@@ -30,7 +30,7 @@ class ModuleAss(ModuleBase):
             imgPath = objJSON[0]['preview']
             if len(imgPath) > 0:
                 urllib.request.urlretrieve(self.mediaUrl + "/" + imgPath, "out.jpg")
-                self.bot.sendPhoto(chat["id"], "out.jpg", "Et un petit cul pour monsieur !")
+                self.bot.sendPhoto(chat["id"], "out.jpg", "Et un petit cul pour %s !" % from_attr["first_name"])
 
     def get_commands(self):
         return [
