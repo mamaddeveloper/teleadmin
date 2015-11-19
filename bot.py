@@ -56,13 +56,6 @@ class Bot(stoppable_thread.StoppableThread):
             module.stop()
         self.logger.info("Stopped")
 
-    def join(self, timeout=None):
-        self.logger.info("Joining")
-        super(Bot, self).join(timeout)
-        self.logger.info("Thread joinied")
-        self.queue.join()
-        self.logger.info("Joinied")
-
     def run(self):
         while self.can_loop():
             try:
