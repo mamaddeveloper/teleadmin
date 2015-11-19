@@ -198,8 +198,8 @@ class Bot(stoppable_thread.StoppableThread):
         if certificate:
             #with open(certificate, "r") as f:
             #    certificate = "".join([l.strip() for l in f.readlines()])
-            certificate =  {"certificate":open(certificate, "r")}
-        self.postFile("setWebhook", data={url:url}, files=certificate)
+            certificate =  {"certificate":(certificate,open(certificate, "rb"))}
+        self.postFile("setWebhook", data={"url":url}, files=certificate)
 
     def sendDocument(self, chat_id, file_path):
         self.postFile("sendDocument", data={"chat_id": chat_id}, files={"document": (file_path, open(file_path, "rb"))})
