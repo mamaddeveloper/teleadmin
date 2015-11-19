@@ -195,11 +195,10 @@ class Bot(stoppable_thread.StoppableThread):
         self.getJson("forwardMessage", chat_id=chat_id, from_chat_id=from_chat_id, message_id=message_id)
 
     def setWebhook(self, url, certificate=None):
+        files = None
         if certificate:
-            #with open(certificate, "r") as f:
-            #    certificate = "".join([l.strip() for l in f.readlines()])
-            certificate =  {"certificate":(certificate,open(certificate, "rb"))}
-        self.postFile("setWebhook", data={"url":url}, files=certificate)
+            files = {'certificate': (certificate, open(certificate, 'rb'))}
+        self.postFile("setWebhook", data={"url":url}, files=files)
 
     def sendDocument(self, chat_id, file_path):
         self.postFile("sendDocument", data={"chat_id": chat_id}, files={"document": (file_path, open(file_path, "rb"))})

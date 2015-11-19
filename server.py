@@ -116,10 +116,12 @@ class WebHookServer(stoppable_thread.StoppableThread):
 class WebHookSetter(threading.Thread):
     def __init__(self, bot, url, certificate):
         super(WebHookSetter, self).__init__()
+        self.logger = logging.getLogger("WebHootSetter")
         self.__bot = bot
         self.__url = url
         self.__certificate = certificate
-        self.logger = logging.getLogger("WebHootSetter")
+        #self.__certificate = None
+        self.logger.info("Cerificate : %s", self.__certificate)
 
     def run(self):
         self.logger.debug("Start wait")
