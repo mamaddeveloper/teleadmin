@@ -1,10 +1,12 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
 import logging
 import ssl
 import stoppable_thread
 import threading
 import time
 import uuid
+from update import Update
 
 
 class HandlerMaison(BaseHTTPRequestHandler):
@@ -20,14 +22,17 @@ class HandlerMaison(BaseHTTPRequestHandler):
             print(WebHookServer.Path)
             if self.path == WebHookServer.Path:
                 self.logger.info("Recieve post")
-                print ("THE POST")
                 jsonListString = []
-                #for line in self.rfile:
-                #    jsonListString.append(str(line, 'utf-8'))
-                #    print ("line:"+str(line, 'utf-8'))
-                print ("THE END")
-                #jsonObject = json.loads(''.join(jsonListString))
-                #print(jsonObject)
+                content_type = self.headers.get_content_type()
+                length = int(self.headers["content-length"])
+                self.logger.info("Recieve content-type %s, %d bytes", content_type, length)
+                data = self.rfile.read(length)
+                self.logger.info("data : %s", data)
+                jsonObject = json.loads(data.decode("utf-8"))
+                self.logger.debug("Json %s", jsonObject)
+                list_updates = [Update(jsonObject)]
+                WebHookServer.Bot.add_updates(list_updates)
+                self.logger.info("End process request")
                 self.ok()
             else:
                 self.error_access()
@@ -49,9 +54,9 @@ class HandlerMaison(BaseHTTPRequestHandler):
 
     def ok(self):
         self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write(bytes("Ok", "utf-8"))
+        self.wfile.write(bytes("{}", "utf-8"))
 
 
 class WebHookServer(stoppable_thread.StoppableThread):
@@ -69,7 +74,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
         self.key = None
         self.url = None
         self.httpd = None
-        
+
     def run(self):
         try:
             self.logger.info("Starting getting public ip")
@@ -90,10 +95,10 @@ class WebHookServer(stoppable_thread.StoppableThread):
 
             # SSL
             self.httpd.socket = ssl.wrap_socket(self.httpd.socket,
-                                            server_side=True,
-                                            certfile=self.__public_path,
-                                            keyfile=self.__private_path,
-                                            ssl_version=ssl_version)
+                                                server_side=True,
+                                                certfile=self.__public_path,
+                                                keyfile=self.__private_path,
+                                                ssl_version=ssl_version)
 
             thread = WebHookSetter(self.Bot, self.url, self.__public_path)
             thread.start()
