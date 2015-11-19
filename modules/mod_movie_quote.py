@@ -32,13 +32,17 @@ class ModuleMovieQuote(ModuleBase):
 
                 print(str_response)
 
-                movieTitle = objJSON["docs"][0]["title"]
-                movieQuote = objJSON["docs"][0]["phrase"]
-                quoteTime = objJSON["docs"][0]["time"]
+                if objJSON["numFound"] > 0:
+                    movieTitle = objJSON["docs"][0]["title"]
+                    movieQuote = objJSON["docs"][0]["phrase"]
+                    quoteTime = objJSON["docs"][0]["time"]
 
-                strTime = self.getStrTime(quoteTime)
+                    strTime = self.getStrTime(quoteTime)
 
-                self.bot.sendMessage("\"%s\" - %s [%s]" % (movieQuote, movieTitle,strTime), chat["id"])
+                    self.bot.sendMessage("\"%s\" - %s [%s]" % (movieQuote, movieTitle,strTime), chat["id"])
+
+                else:
+                    self.bot.sendMessage("Ne pleure pas %s, je n'ai trouvé aucun film avec %s dedans..." % (from_attr['first_name'], searchTerm), chat["id"])
 
             else:
                 self.bot.sendMessage("Not enough argument, usage : /quote query", chat["id"])
