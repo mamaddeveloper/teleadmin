@@ -24,9 +24,9 @@ def main():
     DIR = os.path.join(os.path.dirname(__file__), "botTest")
     TOCKEN_PATH = os.path.join(DIR, "token")
     LOGGING_PATH = os.path.join(os.path.join(os.path.dirname(__file__), "logs"), "config.json")
-    PRIVATE_KEY_PATH = os.path.join(os.path.dirname(__file__), "botTest/private.key")
-    PUBLIC_KEY_PATH = os.path.join(os.path.dirname(__file__), "botTest/public.pem")
-    purge, useWebhook, install = parse()
+    PRIVATE_KEY_PATH = os.path.join(DIR, "private.key")
+    PUBLIC_KEY_PATH = os.path.join(DIR, "public.pem")
+    purge, webhook_url, install = parse()
     if install != None:
         if not os.path.exists(DIR):
             os.mkdir(DIR)
@@ -50,14 +50,14 @@ def main():
         bot.purge()
         return
     server = None
-    if useWebhook:
+    if webhook_url:
         if not os.path.exists(PUBLIC_KEY_PATH):
             print("No public key, please run ssl.sh before !")
             return
         if not os.path.exists(PRIVATE_KEY_PATH):
             print("No private key, please run ssl.sh before !")
             return
-        server = WebHookServer(bot, PUBLIC_KEY_PATH, PRIVATE_KEY_PATH)
+        server = WebHookServer(bot, PUBLIC_KEY_PATH, PRIVATE_KEY_PATH, webhook_url)
     else:
         server = PollingServer(bot)
     print("### Start bot...")

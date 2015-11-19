@@ -58,13 +58,14 @@ class WebHookServer(stoppable_thread.StoppableThread):
     Bot = None
     Path = None
 
-    def __init__(self, bot, public, private, port=8443):
+    def __init__(self, bot, public, private, webhook_url, port=8443):
         super(WebHookServer, self).__init__()
         self.logger = logging.getLogger(type(self).__name__)
         WebHookServer.Bot = bot
         self.__public_path = public
         self.__private_path = private
         self.__port = port
+        self.__webhook_url = webhook_url
         self.key = None
         self.url = None
         self.httpd = None
@@ -72,14 +73,10 @@ class WebHookServer(stoppable_thread.StoppableThread):
     def run(self):
         try:
             self.logger.info("Starting getting public ip")
-            #response = json.loads(requests.get("https://api.ipify.org/?format=json").text)
-            #ip = response["ip"]
-            ip = "fa18swiss.no-ip.biz"
-            self.logger.warning("Ip : %s", ip)
             self.key = str(uuid.uuid4())
             self.logger.warning("Key : '%s'", self.key)
             WebHookServer.Path = "/%s/" % self.key
-            self.url = "https://%s:%d%s" % (ip, self.__port, self.Path)
+            self.url = "https://%s:%d%s" % (self.__webhook_url, self.__port, self.Path)
             self.logger.warning("Url : '%s'", self.url)
             self.logger.info("Init server on port %d", self.__port)
             server_address = ('', self.__port)
@@ -103,10 +100,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
             self.httpd.serve_forever()
         except:
             self.logger.exception("Server fail", exc_info=True)
-        self.logger.info("Stoppring bot")
         self.Bot.setWebhook("")
-        self.Bot.stop()
-        self.logger.info("Stopped bot")
 
     def stop(self):
         super(WebHookServer, self).stop()
