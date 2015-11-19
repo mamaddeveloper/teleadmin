@@ -98,9 +98,6 @@ class WebHookServer(stoppable_thread.StoppableThread):
                                             keyfile=self.__private_path,
                                             ssl_version=ssl_version)
 
-            self.logger.info("Bot starting")
-            self.Bot.start()
-            self.logger.info("Bot started")
             thread = WebHookSetter(self.Bot, self.url, self.__public_path)
             thread.start()
             self.httpd.serve_forever()
