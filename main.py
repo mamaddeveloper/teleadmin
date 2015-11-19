@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from server import Server
+from server import *
 from bot import Bot
 import json
 import logging
@@ -20,11 +20,9 @@ def parse():
     return args.purge, args.webhook, args.install
 
 
-
 def main():
     DIR = os.path.join(os.path.dirname(__file__), "botTest")
     TOCKEN_PATH = os.path.join(DIR, "token")
-    UPDATES_LOG_PATH = os.path.join(DIR, "updates_log")
     LOGGING_PATH = os.path.join(os.path.join(os.path.dirname(__file__), "logs"), "config.json")
     PRIVATE_KEY_PATH = os.path.join(os.path.dirname(__file__), "botTest/private.key")
     PUBLIC_KEY_PATH = os.path.join(os.path.dirname(__file__), "botTest/public.pem")
@@ -32,9 +30,6 @@ def main():
     if install != None:
         if not os.path.exists(DIR):
             os.mkdir(DIR)
-        if not os.path.exists(UPDATES_LOG_PATH):
-            with open(UPDATES_LOG_PATH, 'w') as f:
-                f.write("")
         with open(TOCKEN_PATH, 'w') as f:
             f.write(install+"\n")
         print("End installing")
@@ -50,13 +45,11 @@ def main():
     token = None
     with open(TOCKEN_PATH, 'r') as f:
         token = f.readline()[:-1]
-    bot = Bot(token, "botTest")
+    bot = Bot(token, DIR)
     if purge:
-        bot.setWebhook("")
-        bot.start(purge)
-        bot.getUpdates(purge)
-        bot.stop()
+        bot.purge()
         return
+    server = None
     if useWebhook:
         if not os.path.exists(PUBLIC_KEY_PATH):
             print("No public key, please run ssl.sh before !")
@@ -65,14 +58,32 @@ def main():
             print("No private key, please run ssl.sh before !")
             return
         server = Server(bot, PUBLIC_KEY_PATH, PRIVATE_KEY_PATH)
-        server.run()
     else:
-        bot.setWebhook("")
-        try:
-            bot.start(False)
-        except KeyboardInterrupt:
-            bot.stop()
-            return
+        server = PollingServer(bot)
+    print("### Start bot...")
+    bot.start()
+    print("### Bot started")
+    print("### Start server...")
+    server.start()
+    print("### Server started")
+    try:
+        while True:
+            time.sleep(60*60)
+    except KeyboardInterrupt:
+        pass
+    print("### Stop server...")
+    server.stop()
+    print("### Server stopped")
+    print("### Stop bot...")
+    bot.stop()
+    print("### Bot stopped")
+    print("### Join server...")
+    server.join()
+    print("### Server joined")
+    print("### Join bot...")
+    bot.join()
+    print("### Bot joined")
+    print("### End of main")
 
 if __name__ == "__main__":
     main()

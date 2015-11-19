@@ -1,11 +1,14 @@
-import requests
-import time
 import logging
+import os.path
+import queue
+import requests
+import stoppable_thread
+import time
 from update import Update
 from tools.commandParser import CommandParser
 from tools.admin import AdminAll
 
-class Bot:
+class Bot(stoppable_thread.StoppableThread):
     REQUEST_BASE = "https://api.telegram.org/bot"
     MESSAGE_TEXT_FIELD = "text"
     LIST_MESSAGE_MANDATORY_FIELDS = ["message_id", "from_attr", "date", "chat"]
@@ -15,9 +18,8 @@ class Bot:
     LIST_MESSAGE_FORWARD_FIELDS = ["forward_from", "forward_date"]
 
     def __init__(self, token, directoryName):
+        super(Bot, self).__init__()
         self.logger = logging.getLogger(__name__)
-        self.useWebhook = None
-        self.shouldStopPolling = None
         self.listCommands = None
         self.listCommandsWithDesc = None
         self.commandParser = None
@@ -25,111 +27,118 @@ class Bot:
         self.directoryName = directoryName
         self.token = token
         self.last_update_id = 0
+        self.last_update_id_path = "%s/last_update_id" % self.directoryName
         self.listModules = []
         self.listExclusion = ['mod_spelling.py','mod_chatterbot.py']
         self.loadLocalExclusion()
         self.getListModules()
+        self.queue = queue.Queue()
 
-        self.initCommandList()
-
-    def start(self, useWebhook=True, sleepingTime=2):
-        self.logger.info("starting")
-        lines = []
-        self.useWebhook = useWebhook
-        self.shouldStopPolling = False
-        with open(self.directoryName + "/updates_log", 'r') as f:
-            lines.extend(f.readlines())
-        for line in lines:
-            if self.token in line:
-                self.last_update_id = int(line.split(":")[-1])
-                break
-        if not useWebhook:
-            while not self.shouldStopPolling:
-                self.getUpdates()
-                time.sleep(sleepingTime)
-        self.logger.info("started")
-
-    def stop(self):
-        self.logger.info("stopping")
-        self.shouldStopPolling = True
-        lines = []
-        with open(self.directoryName + "/updates_log", 'r') as f:
-            lines.extend(f.readlines())
-
-        lines = [line for line in lines if self.token not in line]
-        lines.append(self.token + ":" + str(self.last_update_id))
-
-        with open(self.directoryName + "/updates_log", 'w') as f:
-            for line in lines:
-                f.write(line)
-                f.write("\n")
-        for module in self.listModules:
-            module.stop()
-        self.logger.info("stopped")
-
-    def initCommandList(self):
+        #init command list
         self.logger.debug("listCommands %s", repr(self.listCommands))
         self.commandParser = CommandParser(self.listCommands)
+        if os.path.exists(self.last_update_id_path):
+            with open(self.last_update_id_path, 'r') as f:
+                try:
+                    self.last_update_id = int(f.readline().strip())
+                except ValueError:
+                    pass
+
+    def save_last_update_id(self):
+        with open(self.last_update_id_path, 'w') as f:
+            f.write(str(self.last_update_id))
+
+    def stop(self):
+        self.logger.info("Stopping")
+        super(Bot, self).stop()
+        self.logger.info("Stopping modules")
+        for module in self.listModules:
+            module.stop()
+        self.logger.info("Stopped")
+
+    def join(self, timeout=None):
+        self.logger.info("Joining")
+        super(Bot, self).join(timeout)
+        self.logger.info("Thread joinied")
+        self.queue.join()
+        self.logger.info("Joinied")
+
+    def run(self):
+        while self.can_loop():
+            try:
+                self.logger.debug("Geting in queue")
+                update = self.queue.get(timeout=5)
+                self.logger.debug("Get in queue")
+                self.process_update(update)
+            except queue.Empty:
+                self.logger.debug("Queue empty")
+
+    def add_updates(self, list_updates):
+        if len(list_updates) > 0:
+            self.last_update_id = list_updates[-1].update_id + 1
+            self.save_last_update_id()
+            for update in list_updates:
+                self.queue.put_nowait(update)
 
     @staticmethod
     def checkForAttribute(object, attribute):
         exists = getattr(object, attribute, None)
         return exists is not None
 
-    def notify(self, listUpdates):
-        sorted(listUpdates, key=lambda x: x.update_id)
-        if len(listUpdates) > 0:
-            self.last_update_id = listUpdates[-1].update_id + 1
-        for update in listUpdates:
-            message = update.message
-            if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
-                cmd = self.commandParser.parse(message.text)
-                if cmd.isValid :
-                    self.logger.info("cmd %s", message.text)
-                    if not cmd.isKnown:
-                        self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
-                        continue
+    def process_update(self, update):
+        message = update.message
+        if Bot.checkForAttribute(message, Bot.MESSAGE_TEXT_FIELD):
+            cmd = self.commandParser.parse(message.text)
+            if cmd.isValid :
+                self.logger.info("cmd %s", message.text)
+                if not cmd.isKnown:
+                    self.sendMessage("Command '%s' unknown !" % cmd.command, message.chat["id"])
+                    return
+            for module in self.listModules:
+                try:
+                    if cmd.isValid:
+                        module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
+                    else:
+                        module.notify_text(message.message_id, message.from_attr, message.date, message.chat, message.text)
+                except:
+                    self.logger.exception("Module '%s' crash (notify_text/notify_command)", module.name, exc_info=True)
+            return
+        for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
+            if Bot.checkForAttribute(message, forwardField):
                 for module in self.listModules:
                     try:
-                        if cmd.isValid:
-                            module.notify_command(message.message_id, message.from_attr, message.date, message.chat, cmd.command, cmd.args)
-                        else:
-                            module.notify_text(message.message_id, message.from_attr, message.date, message.chat, message.text)
+                        module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
+                                              message.forward_from, message.forward_date)
                     except:
-                        self.logger.exception("Module '%s' crash (notify_text/notify_command)", module.name, exc_info=True)
-                continue
-            for forwardField in Bot.LIST_MESSAGE_FORWARD_FIELDS:
-                if Bot.checkForAttribute(message, forwardField):
-                    for module in self.listModules:
-                        try:
-                            module.notify_forward(message.message_id, message.from_attr, message.date, message.chat,
-                                                  message.forward_from, message.forward_date)
-                        except:
-                            self.logger.exception("Module '%s' crash (notify_forward)", module.name, exc_info=True)
-                    continue
-            for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
-                if Bot.checkForAttribute(message, optionnalField):
-                    
-                    for module in self.listModules:
-                        try:
-                            toCall = getattr(module, "notify_" + optionnalField)
-                            toCall(message.message_id, message.from_attr, message.date, message.chat,
-                               getattr(message, optionnalField))
-                        except:
-                            self.logger.exception("Module '%s' crash (toCall)", module.name, exc_info=True)
-                    continue
+                        self.logger.exception("Module '%s' crash (notify_forward)", module.name, exc_info=True)
+                return
+        for optionnalField in Bot.LIST_MESSAGE_OPTIONNAL_FIELDS:
+            if Bot.checkForAttribute(message, optionnalField):
+                for module in self.listModules:
+                    try:
+                        toCall = getattr(module, "notify_" + optionnalField)
+                        toCall(message.message_id, message.from_attr, message.date, message.chat,
+                           getattr(message, optionnalField))
+                    except:
+                        self.logger.exception("Module '%s' crash (toCall)", module.name, exc_info=True)
+                return
 
-    # should not be used, since we're working using a webhook
-    def getUpdates(self, purge=False):
+    def getUpdateFromApi(self):
         r = self.getJson("getUpdates", offset=self.last_update_id)
-        listUpdates = []
-        for update in r["result"]:
-            listUpdates.append(Update(update))
-        if not purge:
-            self.notify(listUpdates)
-        else:
-            if len(listUpdates) > 0:
-                self.last_update_id = max([x.update_id for x in listUpdates]) + 1
+        list_updates = list([Update(u) for u in r["result"]])
+        sorted(list_updates, key=lambda x: x.update_id)
+        return list_updates
+
+    def getUpdates(self):
+        list_updates = self.getUpdateFromApi()
+        self.add_updates(list_updates)
+
+    def purge(self):
+        self.setWebhook("")
+        list_updates = self.getUpdateFromApi()
+        if len(list_updates) > 0:
+            self.last_update_id = max([x.update_id for x in list_updates]) + 1
+            self.save_last_update_id()
 
     def answerToMessage(self, text, message):
         if message is not None:
@@ -189,8 +198,8 @@ class Bot:
         if certificate:
             #with open(certificate, "r") as f:
             #    certificate = "".join([l.strip() for l in f.readlines()])
-            certificate =  open(certificate, "r")
-        self.postFile("setWebhook", url=url, certificate=certificate)
+            certificate =  {"certificate":open(certificate, "r")}
+        self.postFile("setWebhook", data={url:url}, files=certificate)
 
     def sendDocument(self, chat_id, file_path):
         self.postFile("sendDocument", data={"chat_id": chat_id}, files={"document": (file_path, open(file_path, "rb"))})

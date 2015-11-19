@@ -6,7 +6,7 @@ import os
 import queue
 import random
 import time
-import threading
+import stoppable_thread
 
 
 def main():
@@ -36,27 +36,9 @@ def main():
     print("Full stop")
 
 
-class StoppableThread(threading.Thread):
-    """Thread class with a stop() method. The thread itself has to check
-    regularly for the stopped() condition."""
-
-    def __init__(self):
-        super(StoppableThread, self).__init__()
-        self._stop_event = threading.Event()
-
-    def stop(self):
-        self._stop_event.set()
-
-    def stopped(self):
-        return self._stop_event.isSet()
-
-    def can_loop(self):
-        return not self.stopped()
-
-
-class SimulatorWebhook(StoppableThread):
+class SimulatorWebhook(stoppable_thread.StoppableThread):
     def __init__(self, queue):
-        StoppableThread.__init__(self)
+        super(SimulatorWebhook, self).__init__()
         self.queue = queue
         self.logger = logging.getLogger(type(self).__name__)
 
@@ -69,9 +51,10 @@ class SimulatorWebhook(StoppableThread):
             self.logger.info("Send '%s'",k)
             self.queue.put_nowait(k)
 
-class SimulatorBot(StoppableThread):
+
+class SimulatorBot(stoppable_thread.StoppableThread):
     def __init__(self, queue):
-        StoppableThread.__init__(self)
+        super(SimulatorBot, self).__init__()
         self.queue = queue
         self.logger = logging.getLogger(type(self).__name__)
 

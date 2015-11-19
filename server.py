@@ -1,19 +1,15 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import ssl
-import json
 import logging
-import requests
-import uuid
+import ssl
+import stoppable_thread
 import threading
 import time
+import uuid
+
 
 class HandlerMaison(BaseHTTPRequestHandler):
     logger = logging.getLogger("HandlerMaison")
     #server stuff
-    def _set_headers(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
 
     def do_GET(self):
         return self.do_POST()
@@ -58,19 +54,22 @@ class HandlerMaison(BaseHTTPRequestHandler):
         self.wfile.write(bytes("Ok", "utf-8"))
 
 
-class Server:
+class WebHootkServer(stoppable_thread.StoppableThread):
     Bot = None
     Path = None
 
-    def __init__(self, bot, public, private):
+    def __init__(self, bot, public, private, port=8443):
+        super(WebHootkServer, self).__init__()
         self.logger = logging.getLogger(type(self).__name__)
-        Server.Bot = bot
+        WebHootkServer.Bot = bot
         self.__public_path = public
         self.__private_path = private
+        self.__port = port
         self.key = None
         self.url = None
+        self.httpd = None
         
-    def run(self, server_class=HTTPServer, port=8443):
+    def run(self):
         try:
             self.logger.info("Starting getting public ip")
             #response = json.loads(requests.get("https://api.ipify.org/?format=json").text)
@@ -79,15 +78,15 @@ class Server:
             self.logger.warning("Ip : %s", ip)
             self.key = str(uuid.uuid4())
             self.logger.warning("Key : '%s'", self.key)
-            Server.Path = "/%s/" % self.key
-            self.url = "https://%s:%d%s" % (ip, port, self.Path)
+            WebHootkServer.Path = "/%s/" % self.key
+            self.url = "https://%s:%d%s" % (ip, self.__port, self.Path)
             self.logger.warning("Url : '%s'", self.url)
-            self.logger.info("Init server on port %d", port)
-            server_address = ('', port)
-            httpd = HTTPServer(server_address, HandlerMaison)
+            self.logger.info("Init server on port %d", self.__port)
+            server_address = ('', self.__port)
+            self.httpd = HTTPServer(server_address, HandlerMaison)
 
             # SSL
-            httpd.socket = ssl.wrap_socket( httpd.socket,
+            self.httpd.socket = ssl.wrap_socket(self.httpd.socket,
                                             server_side=True,
                                             certfile=self.__public_path,
                                             keyfile=self.__private_path,
@@ -96,21 +95,19 @@ class Server:
             self.logger.info("Bot starting")
             self.Bot.start()
             self.logger.info("Bot started")
-            self.logger.info("Starting")
             thread = WebHootSetter(self.Bot, self.url, self.__public_path)
             thread.start()
-            httpd.serve_forever()
-            self.logger.info("Started")
-        except KeyboardInterrupt:
-            self.logger.info("KeyboardInterrupt")
+            self.httpd.serve_forever()
         except:
             self.logger.exception("Server fail", exc_info=True)
         self.logger.info("Stoppring bot")
         self.Bot.setWebhook("")
         self.Bot.stop()
         self.logger.info("Stopped bot")
-    def setWebhook(self):
-        self.Bot.setWebhook(self.url, self.__public_path)
+
+    def stop(self):
+        super(WebHootkServer, self).stop()
+        self.httpd.shutdown()
 
 
 class WebHootSetter(threading.Thread):
@@ -119,7 +116,6 @@ class WebHootSetter(threading.Thread):
         self.__bot = bot
         self.__url = url
         self.__certificate = certificate
-        #self.__certificate = None
         self.logger = logging.getLogger("WebHootSetter")
 
     def run(self):
@@ -128,3 +124,16 @@ class WebHootSetter(threading.Thread):
         self.logger.debug("End wait")
         self.__bot.setWebhook(self.__url, self.__certificate)
         self.logger.debug("End set")
+
+
+class PollingServer(stoppable_thread.StoppableThread):
+    def __init__(self, bot, sleep_time=2):
+        super(PollingServer, self).__init__()
+        self.bot = bot
+        self.sleep_time = sleep_time
+
+    def run(self):
+        self.bot.setWebhook("")
+        while self.can_loop():
+            self.bot.getUpdates()
+            time.sleep(self.sleep_time)
