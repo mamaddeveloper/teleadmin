@@ -19,6 +19,7 @@ class Bot(stoppable_thread.StoppableThread):
 
     def __init__(self, token, directoryName):
         super(Bot, self).__init__()
+        self.name = "Thread-Bot"
         self.logger = logging.getLogger(__name__)
         self.listCommands = None
         self.listCommandsWithDesc = None
@@ -29,7 +30,7 @@ class Bot(stoppable_thread.StoppableThread):
         self.last_update_id = 0
         self.last_update_id_path = "%s/last_update_id" % self.directoryName
         self.listModules = []
-        self.listExclusion = ['mod_spelling.py','mod_chatterbot.py']
+        self.listExclusion = []
         self.loadLocalExclusion()
         self.getListModules()
         self.queue = queue.Queue()
@@ -136,13 +137,16 @@ class Bot(stoppable_thread.StoppableThread):
     def answerToMessage(self, text, message):
         if message is not None:
             r = self.getJson("sendMessage", chat_id=message.chat["id"], text=text, disable_web_page_preview="true")
+
     def loadLocalExclusion(self):
-        import os.path
-        file = "botTest/modules_exclude_local"
+        file = os.path.join(self.directoryName, "modules_exclude_local")
         if os.path.exists(file):
             with open(file, 'r') as f:
                 for line in f:
                     self.listExclusion.append(line.rstrip())
+        else:
+            with open(file, 'w') as f:
+                f.write("")
         self.logger.info("listExclusion = %s", self.listExclusion)
 
     def getListModules(self):

@@ -61,6 +61,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
 
     def __init__(self, bot, public, private, webhook_url, port=8443):
         super(WebHookServer, self).__init__()
+        self.name = "Thread-WebHookServer"
         self.logger = logging.getLogger(type(self).__name__)
         WebHookServer.Bot = bot
         self.__public_path = public
@@ -107,6 +108,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
 class WebHookSetter(threading.Thread):
     def __init__(self, bot, url, certificate):
         super(WebHookSetter, self).__init__()
+        self.name = "Thread-WebHootSetter"
         self.logger = logging.getLogger("WebHootSetter")
         self.__bot = bot
         self.__url = url
@@ -124,6 +126,7 @@ class WebHookSetter(threading.Thread):
 class PollingServer(stoppable_thread.StoppableThread):
     def __init__(self, bot, sleep_time=2):
         super(PollingServer, self).__init__()
+        self.name = "Thread-PollingServer"
         self.bot = bot
         self.sleep_time = sleep_time
 
