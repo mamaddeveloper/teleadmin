@@ -60,6 +60,7 @@ class ImageSenderTask(Thread):
         self.n = n
 
     def run(self):
+        self.logger.info("Starting")
         for i in range(self.n):
             self.logger.debug("Start %d", i)
             image_type = random.choice(self.images_type)
@@ -68,3 +69,4 @@ class ImageSenderTask(Thread):
                 self.bot.sendPhotoUrl(self.chat_id, result.url(), result.message())
             else:
                 self.bot.sendMessage(result.message(), self.chat_id)
+        self.logger.info("End")
