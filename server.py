@@ -9,28 +9,24 @@ import uuid
 from update import Update
 
 
-class HandlerMaison(BaseHTTPRequestHandler):
-    logger = logging.getLogger("HandlerMaison")
-    #server stuff
+class WebHookHandler(BaseHTTPRequestHandler):
+    logger = logging.getLogger("WebHookHandler")
 
     def do_GET(self):
         return self.do_POST()
 
     def do_POST(self):
         try:
-            print(self.path)
-            print(WebHookServer.Path)
             if self.path == WebHookServer.Path:
                 self.logger.info("Recieve post")
-                jsonListString = []
                 content_type = self.headers.get_content_type()
                 length = int(self.headers["content-length"])
                 self.logger.info("Recieve content-type %s, %d bytes", content_type, length)
                 data = self.rfile.read(length)
                 self.logger.info("data : %s", data)
-                jsonObject = json.loads(data.decode("utf-8"))
-                self.logger.debug("Json %s", jsonObject)
-                list_updates = [Update(jsonObject)]
+                json_object = json.loads(data.decode("utf-8"))
+                self.logger.debug("Json %s", json_object)
+                list_updates = [Update(json_object)]
                 WebHookServer.Bot.add_updates(list_updates)
                 self.logger.info("End process request")
                 self.ok()
@@ -85,7 +81,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
             self.logger.warning("Url : '%s'", self.url)
             self.logger.info("Init server on port %d", self.__port)
             server_address = ('', self.__port)
-            self.httpd = HTTPServer(server_address, HandlerMaison)
+            self.httpd = HTTPServer(server_address, WebHookHandler)
 
             ssl_version = ssl.PROTOCOL_TLSv1
 
@@ -115,7 +111,6 @@ class WebHookSetter(threading.Thread):
         self.__bot = bot
         self.__url = url
         self.__certificate = certificate
-        #self.__certificate = None
         self.logger.info("Cerificate : %s", self.__certificate)
 
     def run(self):
