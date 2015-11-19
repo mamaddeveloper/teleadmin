@@ -1,7 +1,6 @@
 import requests
 from lxml import html
 from urllib.parse import urljoin
-from urllib.request import urlopen, urlretrieve
 
 class ImageSender:
     @staticmethod
@@ -12,5 +11,4 @@ class ImageSender:
         if name_xpath:
             name = parsed_body.xpath(name_xpath)
         image = urljoin(response.url, image[0])
-        urlretrieve(image, "out.jpg")
-        bot.sendPhoto(chat, "out.jpg", name)
+        bot.sendPhotoUrl(chat, image, name)

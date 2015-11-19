@@ -211,6 +211,18 @@ class Bot:
         files = {'photo': (photoPath, open(photoPath, 'rb'))}
         self.postFile("sendPhoto", data=data, files=files)
 
+    def sendPhotoUrl(self, chat_id, photo_url, capiton=None, reply_to_message_id=None, reply_markup=None):
+        try:
+            response = requests.get(photo_url, stream=True, timeout=5)
+            with open("out.jpg", "wb") as f:
+                for block in response.iter_content(1024):
+                    f.write(block)
+            self.sendPhoto(chat_id, "out.jpg", capiton, reply_to_message_id, reply_markup)
+        except:
+            self.logger.exception("Fail to download and send image %s", photo_url, exc_info=True)
+            return False
+        return True
+
     def sendSticker(self, chat_id, sticker):
         self.getJson("sendSticker", chat_id=chat_id, sticker=sticker)
 
@@ -230,16 +242,20 @@ class Bot:
     # creates a request "requestName", with each key, value pair from parameters as parameters
     def getJson(self, requestName, **parameters):
         try:
-            url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
-            self.logger.info("send %s %s", url, parameters)
-            r = requests.post(url, parameters)
-            jsonResponse = r.json()
-            self.logger.info("recieve %s", jsonResponse)
-            if jsonResponse['ok']:
-                return jsonResponse
-            else:
-                self.logger.error("No ok response %s", jsonResponse)
-                return {"result": []}
+            while True:
+                url = "%s%s/%s" % (Bot.REQUEST_BASE, self.token, requestName)
+                self.logger.info("send %s %s", url, parameters)
+                r = requests.post(url, parameters)
+                jsonResponse = r.json()
+                self.logger.info("recieve %s", jsonResponse)
+                if jsonResponse['ok']:
+                    return jsonResponse
+                else:
+                    self.logger.error("No ok response %s", jsonResponse)
+                    if jsonResponse["error_code"] != 429:
+                        return {"result": []}
+                    self.logger.warning("Wait + loop")
+                    time.sleep(30)
         except:
             self.logger.exception("fail to get response", exc_info=True)
             return {"result": []}

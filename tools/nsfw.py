@@ -15,7 +15,7 @@ class Nsfw:
             "last"
         )
 
-    def image(self, key, mode, image_dest):
+    def image(self, key, mode):
         parsed_body = None
         xpath = None
         url = None
@@ -45,14 +45,12 @@ class Nsfw:
             image = parsed_body.xpath(xpath)
 
             # Convert any relative urls to absolute urls
-            image = urljoin(response.url, image[0])
+            url = urljoin(response.url, image[0])
 
-            urlretrieve(image, image_dest) #works with static address
-
-            return NsfwDownloadResult(True, message)
+            return NsfwDownloadResult(True, message, url)
         except:
             self.logger.exception("Bonjour fail %s %s %s", url, xpath, parsed_body, exc_info=True)
-            return NsfwDownloadResult(False, "Fucking random website crash")
+            return NsfwDownloadResult(False, "Fucking random website crash", None)
 
     def parse(self, commandStr):
         if commandStr == "":
@@ -87,12 +85,16 @@ class NsfwParserResult:
 
 
 class NsfwDownloadResult:
-    def __init__(self, ok, message):
+    def __init__(self, ok, message, url):
         self.__ok = ok
         self.__message = message
+        self.__url = url
 
     def ok(self):
         return self.__ok
 
     def message(self):
         return self.__message
+
+    def url(self):
+        return self.__url

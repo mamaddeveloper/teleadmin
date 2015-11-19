@@ -49,6 +49,7 @@ class TestLimitator(unittest.TestCase):
             self.fail("must crash")
         except LimitatorLimitted:
             pass
+        
     def test_3(self):
         l = Limitator(5, 2)
         l.next(self.USER1, 5)
@@ -67,5 +68,61 @@ class TestLimitator(unittest.TestCase):
         except LimitatorLimitted:
             pass
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_5(self):
+        l = Limitator(1, 61, True)
+        l.next(self.USER1)
+        try:
+            l.next(self.USER1)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+        time.sleep(62)
+        l.next(self.USER1)
+        try:
+            l.next(self.USER1)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+
+    def test_6(self):
+        l = Limitator(5, 2, True)
+        l.next(self.USER1, 3)
+        try:
+            l.next(self.USER1, 3)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+        l.next(self.USER1, 2)
+
+    def test_7(self):
+        l1 = Limitator(5, 2, False)
+        l2 = Limitator(5, 2, True)
+        l = LimitatorMultiple(l1, l2)
+        l.next(self.USER1, 3)
+        l.next(self.USER2, 2)
+        try:
+            l.next(self.USER1, 1)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+
+    def test_8(self):
+        l1 = Limitator(5, 2, False)
+        l2 = Limitator(3, 2, True)
+        l = LimitatorMultiple(l1, l2)
+        l.next(self.USER1, 3)
+        l.next(self.USER2, 2)
+        try:
+            l.next(self.USER1, 1)
+            self.fail("must crash")
+        except LimitatorLimitted:
+            pass
+
+    def test_9(self):
+        l1 = Limitator(5, 2, False)
+        l2 = Limitator(3, 2, True)
+        try:
+            l = LimitatorMultiple(l1, l2, 1)
+            self.fail("must crash")
+        except ValueError:
+            pass

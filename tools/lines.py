@@ -2,8 +2,11 @@ import random
 import codecs
 
 class LinesAbstract:
-    def __init__(self, path):
-        self.lines = list([line.strip() for line in codecs.open(path, "r", "utf-8")])
+    def __init__(self, path_or_list):
+        if isinstance(path_or_list, str):
+            self.lines = list([line.strip() for line in codecs.open(path_or_list, "r", "utf-8")])
+        else:
+            self.lines = list(path_or_list)
         self.max = len(self.lines)
 
     def __next__(self):
@@ -24,7 +27,3 @@ class LinesSeqRnd(LinesSeq):
     def __init__(self, path):
         super().__init__(path)
         random.shuffle(self.lines)
-
-class LinesRnd(LinesAbstract):
-    def __next__(self):
-        return self.lines[random.randrange(self.max)]

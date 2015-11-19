@@ -22,5 +22,21 @@
             "random" : "http://www.bonjourmonsieur.fr/monsieur/random.html",
             "last" : "http://www.bonjourmonsieur.fr/"
         }
+    },
+    "bombe": {
+        "title": "Bonjour la bombe.",
+        "xpath": "//div[@class=\"photo\"]//img/@src",
+        "urls" : {
+            "random" : "http://www.bonjourlabombe.fr/random",
+            "last" : "http://www.bonjourlabombe.fr/"
+        }
+    },
+    "belle": {
+        "title": "Bonjour ma belle.",
+        "xpath": "//div[@class=\"photo-wrap photo--image\"]//img/@src",
+        "urls" : {
+            "random" : "http://www.bonjourmabelle.fr/random",
+            "last" : "http://www.bonjourmabelle.fr/"
+        }
     }
 }

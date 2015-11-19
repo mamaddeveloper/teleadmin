@@ -21,7 +21,7 @@ class TestNsfw(unittest.TestCase):
         n = 5 if mode == "random" else 1
         nsfw = Nsfw(logging.getLogger("TestNsfw"))
         for i in range(n):
-            res = nsfw.image(name, mode, "../out.jpg")
+            res = nsfw.image(name, mode)
             self.assertTrue(res.ok())
 
     def test_madame_random(self):
