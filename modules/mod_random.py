@@ -1,7 +1,8 @@
 from modules.module_base import ModuleBase
 from tools.nsfw import Nsfw
 import random
-from tools.lines import LinesSeqRnd
+from threading import Thread
+import logging
 
 
 class ModuleRandom(ModuleBase):
@@ -24,13 +25,8 @@ class ModuleRandom(ModuleBase):
                 c = random.randint(a, b)
                 if c == n:
                     self.bot.sendMessage("%s win\nYou are such a coquin" % from_attr["first_name"], chat["id"])
-                    for i in range(n):
-                        image_type = random.choice(self.images_type)
-                        result = self.nsfw.image(image_type, "random")
-                        if result.ok():
-                            self.bot.sendPhotoUrl(chat["id"], result.url(), result.message())
-                        else:
-                            self.bot.sendMessage(result.message(), chat["id"])
+                    task = ImageSenderTask(self.bot, self.nsfw, self.images_type, chat["id"], n)
+                    task.start()
                 else:
                     self.bot.sendMessage("%s : %d\nBot : %d\nYou loose !" % (from_attr["first_name"], n, c), chat["id"])
         except ValueError:
@@ -50,3 +46,23 @@ class ModuleRandom(ModuleBase):
             ("random", "Random [%d %d]" % (self.RANDOM_MIN, self.RANDOM_MAX)),
             ("randomchallenger", "Random [%d %d]" % (self.CHALLENGE_MIN, self.CHALLENGE_MAX)),
         ]
+
+class ImageSenderTask(Thread):
+    def __init__(self, bot, nsfw, images_type, chat_id, n):
+        Thread.__init__(self)
+        self.logger = logging.getLogger("ImageSenderTask %s" % id(self))
+        self.bot = bot
+        self.nsfw = nsfw
+        self.images_type = images_type
+        self.chat_id = chat_id
+        self.n = n
+
+    def run(self):
+        for i in range(self.n):
+            self.logger.debug("Start %d", i)
+            image_type = random.choice(self.images_type)
+            result = self.nsfw.image(image_type, "random")
+            if result.ok():
+                self.bot.sendPhotoUrl(self.chat_id, result.url(), result.message())
+            else:
+                self.bot.sendMessage(result.message(), self.chat_id)
