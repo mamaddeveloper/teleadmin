@@ -17,8 +17,8 @@ class HandlerMaison(BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             print(self.path)
-            print(Server.Path)
-            if self.path == Server.Path:
+            print(WebHookServer.Path)
+            if self.path == WebHookServer.Path:
                 self.logger.info("Recieve post")
                 print ("THE POST")
                 jsonListString = []
@@ -54,14 +54,14 @@ class HandlerMaison(BaseHTTPRequestHandler):
         self.wfile.write(bytes("Ok", "utf-8"))
 
 
-class WebHootkServer(stoppable_thread.StoppableThread):
+class WebHookServer(stoppable_thread.StoppableThread):
     Bot = None
     Path = None
 
     def __init__(self, bot, public, private, port=8443):
-        super(WebHootkServer, self).__init__()
+        super(WebHookServer, self).__init__()
         self.logger = logging.getLogger(type(self).__name__)
-        WebHootkServer.Bot = bot
+        WebHookServer.Bot = bot
         self.__public_path = public
         self.__private_path = private
         self.__port = port
@@ -78,7 +78,7 @@ class WebHootkServer(stoppable_thread.StoppableThread):
             self.logger.warning("Ip : %s", ip)
             self.key = str(uuid.uuid4())
             self.logger.warning("Key : '%s'", self.key)
-            WebHootkServer.Path = "/%s/" % self.key
+            WebHookServer.Path = "/%s/" % self.key
             self.url = "https://%s:%d%s" % (ip, self.__port, self.Path)
             self.logger.warning("Url : '%s'", self.url)
             self.logger.info("Init server on port %d", self.__port)
@@ -95,7 +95,7 @@ class WebHootkServer(stoppable_thread.StoppableThread):
             self.logger.info("Bot starting")
             self.Bot.start()
             self.logger.info("Bot started")
-            thread = WebHootSetter(self.Bot, self.url, self.__public_path)
+            thread = WebHookSetter(self.Bot, self.url, self.__public_path)
             thread.start()
             self.httpd.serve_forever()
         except:
@@ -106,13 +106,13 @@ class WebHootkServer(stoppable_thread.StoppableThread):
         self.logger.info("Stopped bot")
 
     def stop(self):
-        super(WebHootkServer, self).stop()
+        super(WebHookServer, self).stop()
         self.httpd.shutdown()
 
 
-class WebHootSetter(threading.Thread):
+class WebHookSetter(threading.Thread):
     def __init__(self, bot, url, certificate):
-        threading.Thread.__init__(self)
+        super(WebHookSetter, self).__init__()
         self.__bot = bot
         self.__url = url
         self.__certificate = certificate

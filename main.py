@@ -57,7 +57,7 @@ def main():
         if not os.path.exists(PRIVATE_KEY_PATH):
             print("No private key, please run ssl.sh before !")
             return
-        server = Server(bot, PUBLIC_KEY_PATH, PRIVATE_KEY_PATH)
+        server = WebHookServer(bot, PUBLIC_KEY_PATH, PRIVATE_KEY_PATH)
     else:
         server = PollingServer(bot)
     print("### Start bot...")
