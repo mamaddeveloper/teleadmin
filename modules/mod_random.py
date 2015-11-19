@@ -62,7 +62,7 @@ class ImageSenderTask(Thread):
     def run(self):
         self.logger.info("Starting")
         for i in range(self.n):
-            self.logger.debug("Start %d", i)
+            self.logger.info("Start %d", i)
             image_type = random.choice(self.images_type)
             result = self.nsfw.image(image_type, "random")
             if result.ok():
