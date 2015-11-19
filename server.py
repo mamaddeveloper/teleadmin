@@ -87,11 +87,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
             server_address = ('', self.__port)
             self.httpd = HTTPServer(server_address, HandlerMaison)
 
-            try:
-                ssl_version = ssl.PROTOCOL_TLSv1_2
-            except:
-                self.logger.warning("Can't use TLS 1.2, use TLS 1 instead")
-                ssl_version = ssl.PROTOCOL_TLSv1
+            ssl_version = ssl.PROTOCOL_TLSv1
 
             # SSL
             self.httpd.socket = ssl.wrap_socket(self.httpd.socket,
