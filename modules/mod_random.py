@@ -1,5 +1,6 @@
 from modules.module_base import ModuleBase
 from tools.nsfw import Nsfw
+from tools.bullshit import Bullshit
 import random
 from threading import Thread
 import logging
@@ -15,6 +16,7 @@ class ModuleRandom(ModuleBase):
         self.name = "ModuleRandom"
         self.nsfw = Nsfw(self.logger)
         self.images_type = list([i for i in self.nsfw.bonjours.keys() if i != "monsieur"])
+        self.bullshit = Bullshit()
 
     def random(self, a, b, commandStr, chat, from_attr):
         try:
@@ -28,7 +30,7 @@ class ModuleRandom(ModuleBase):
                     task = ImageSenderTask(self.bot, self.nsfw, self.images_type, chat["id"], n)
                     task.start()
                 else:
-                    self.bot.sendMessage("%s : %d\nBot : %d\nYou loose !" % (from_attr["first_name"], n, c), chat["id"])
+                    self.bot.sendMessage("%s : %d\nBot : %d\nYou loose !\n%s" % (from_attr["first_name"], n, c, next(self.bullshit)), chat["id"])
         except ValueError:
             self.error_msg(chat, a, b)
 
