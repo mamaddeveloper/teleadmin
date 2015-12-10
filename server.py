@@ -6,7 +6,6 @@ import stoppable_thread
 import threading
 import time
 import uuid
-from update import Update
 
 
 class WebHookHandler(BaseHTTPRequestHandler):
@@ -23,10 +22,10 @@ class WebHookHandler(BaseHTTPRequestHandler):
                 length = int(self.headers["content-length"])
                 self.logger.info("Recieve content-type %s, %d bytes", content_type, length)
                 data = self.rfile.read(length)
-                self.logger.info("data : %s", data)
+                self.logger.debug("data : %s", data)
                 json_object = json.loads(data.decode("utf-8"))
-                self.logger.debug("Json %s", json_object)
-                list_updates = [Update(json_object)]
+                self.logger.info("Json %s", json_object)
+                list_updates = [json_object]
                 WebHookServer.Bot.add_updates(list_updates)
                 self.logger.info("End process request")
                 self.ok()
@@ -133,5 +132,6 @@ class PollingServer(stoppable_thread.StoppableThread):
     def run(self):
         self.bot.setWebhook("")
         while self.can_loop():
-            self.bot.getUpdates()
+            list_updates = self.bot.getUpdates()
+            self.bot.add_updates(list_updates)
             time.sleep(self.sleep_time)

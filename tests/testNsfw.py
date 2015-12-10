@@ -41,3 +41,16 @@ class TestNsfw(unittest.TestCase):
 
     def test_mademoiselle_last(self):
         self.name_mode("mademoiselle", "last")
+
+    def test_all(self):
+        modes = (
+            ("last", 1),
+            ("random", 5),
+        )
+        nsfw = Nsfw(logging.getLogger("TestNsfw"))
+        for name in nsfw.bonjours:
+            for mode, n in modes:
+                print("%s : %s" % (name, mode))
+                for i in range(n):
+                    res = nsfw.image(name, mode)
+                    self.assertTrue(res.ok(), "%s : %s" % (name, mode))

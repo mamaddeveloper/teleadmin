@@ -14,6 +14,8 @@ class Nsfw:
             "random",
             "last"
         )
+        self.bonjours_keys = list(self.bonjours.keys())
+        self.bonjours_keys.sort()
 
     def image(self, key, mode):
         parsed_body = None

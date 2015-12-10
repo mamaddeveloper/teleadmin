@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# coding: utf8
 
 from server import *
 from bot import Bot
@@ -42,7 +43,6 @@ def main():
     else:
         logging.basicConfig(level=logging.DEBUG)
 
-    token = None
     with open(TOCKEN_PATH, 'r') as f:
         token = f.readline()[:-1]
     bot = Bot(token, DIR)

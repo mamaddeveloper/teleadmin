@@ -47,9 +47,9 @@ class ModuleConversationListener(ModuleBase):
     def insertUser(self, from_attr):
 
         # Check if username and lastname are not set in Telegram
-        if not ModuleBase.checkForAttribute(from_attr, 'username'):
+        if not 'username' in from_attr:
             from_attr['username'] = from_attr['first_name']
-        if not ModuleBase.checkForAttribute(from_attr, 'last_name'):
+        if not 'last_name' in from_attr:
             from_attr['last_name'] = from_attr['first_name']
 
         # Insert user in DB

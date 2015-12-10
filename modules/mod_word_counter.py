@@ -13,7 +13,7 @@ class ModuleWordCounter(ModuleBase):
         self.load()
 
     #Usage : /wc or /WordCounter action speakerName expression
-    #Action can be : get, set, add, sub, list
+    #Action can be : get, set, add, sub, del, list
     #Example : /wc Bilat get gratuit
     #  --->    bilat said 99 times : gratuit
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
@@ -25,7 +25,7 @@ class ModuleWordCounter(ModuleBase):
             if len(args) >= 2 :
 
                 speakerName = args[0].lower() # the one who said the expression to count
-                action = args[1].lower() # get, set, add, sub or list
+                action = args[1].lower() # get, set, add, sub, del or list
 
                 #Gets the first speaker with the given name or, if this speaker doesn't exist yet, return None
                 speaker = next((s for s in self.speakers if s.name == speakerName),None)
@@ -63,8 +63,21 @@ class ModuleWordCounter(ModuleBase):
                         self.save()
                     elif action == "sub" :
                         n = speaker.getExpressionCount(expression)
-                        speaker.setExpressionCount(expression, n-1)
-                        text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n-1)
+                        if n <= 0: #Expression doesn't exist
+                            text = expression + " doesn't exist"
+                        elif n == 1: #Expression will be == 0 -> deletion
+                            text = expression + " has been deleted"
+                            speaker.deleteExpression(expression)
+                        else: #Expression count --
+                            speaker.setExpressionCount(expression, n-1)
+                            text = speaker.name + "; " + expression + " : " + str(n) + " -> " + str(n-1)
+                        self.save()
+                    elif action == "del" :
+                        success = speaker.deleteExpression(expression)
+                        if success:
+                            text = expression + " has been deleted"
+                        else:
+                            text = expression + " doesn't exist"
                         self.save()
                     else:
                         text = "Action parameter must be get,set,add, sub or list"
@@ -110,3 +123,10 @@ class Speaker:
 
     def setExpressionCount(self, expression, n):
         self.expressionCounter[expression] = n
+
+    def deleteExpression(self, expression):
+        try:
+            del self.expressionCounter[expression]
+            return True
+        except(KeyError):
+            return False

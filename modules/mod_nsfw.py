@@ -2,6 +2,7 @@ from modules.module_base import ModuleBase
 from tools.nsfw import Nsfw
 from tools.limitator import Limitator, LimitatorLimitted, LimitatorMultiple
 
+
 class ModuleNSFW(ModuleBase):
     def __init__(self, bot):
         ModuleBase.__init__(self, bot)
@@ -15,7 +16,7 @@ class ModuleNSFW(ModuleBase):
     def notify_command(self, message_id, from_attr, date, chat, commandName, commandStr):
         if commandName == "bonjour":
             if commandStr == "":
-                text = "Bonjours : %s" % ", ".join(self.nsfw.bonjours)
+                text = "Bonjours : %s" % ", ".join(self.nsfw.bonjours_keys)
                 self.bot.sendMessage(text, chat["id"])
                 return
             parserResult = self.nsfw.parse(commandStr)
@@ -32,8 +33,7 @@ class ModuleNSFW(ModuleBase):
             except LimitatorLimitted:
                 self.bot.sendMessage("N'abuse pas mon petit cochon !", chat["id"])
 
-
     def get_commands(self):
         return [
-            ("bonjour", "Bonjour. Keywords: <%s> <last/random>" % "/".join(self.nsfw.bonjours)),
+            ("bonjour", "Bonjour. Keywords: <%s> <last/random>" % "/".join(self.nsfw.bonjours_keys)),
         ]

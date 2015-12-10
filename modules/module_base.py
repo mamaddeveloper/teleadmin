@@ -5,11 +5,6 @@ class ModuleBase:
         self.name = "Piconche ne pige pas le python"
         self.bot = bot
         self.logger = logging.getLogger(type(self).__name__)
-
-    @staticmethod
-    def checkForAttribute(object, attribute):
-        exists = getattr(object, attribute, None)
-        return exists is not None
         
     def notify_forward(self, message_id, from_attr, date, chat, forward_from, forward_date):
         pass
