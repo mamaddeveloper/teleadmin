@@ -165,12 +165,12 @@ class Bot(stoppable_thread.StoppableThread):
 
     def answerToMessage(self, text, message):
         if message is not None:
-            self.__send_message("sendMessage", chat_id=message["chat"]["id"], text=text, disable_web_page_preview="true")
+            self.__send_message("sendMessage", chat_id=message["chat"]["id"], text=text, disable_web_page_preview=True)
 
     def getMe(self):
         return self.__send_message("getMe")
 
-    def sendMessage(self, text, chat_id, disable_web_page_preview="true", reply_to_message_id=None, reply_markup=None):
+    def sendMessage(self, text, chat_id, disable_web_page_preview=True, reply_to_message_id=None, reply_markup=None):
         self.__send_message("sendMessage", chat_id=chat_id, text=text, disable_web_page_preview=disable_web_page_preview,
                             reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
 
