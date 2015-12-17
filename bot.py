@@ -170,9 +170,9 @@ class Bot(stoppable_thread.StoppableThread):
     def getMe(self):
         return self.__send_message("getMe")
 
-    def sendMessage(self, text, chat_id, disable_web_page_preview=True, reply_to_message_id=None, reply_markup=None):
+    def sendMessage(self, text, chat_id, disable_web_page_preview=True, reply_to_message_id=None, reply_markup=None, parse_mode=None):
         self.__send_message("sendMessage", chat_id=chat_id, text=text, disable_web_page_preview=disable_web_page_preview,
-                            reply_to_message_id=reply_to_message_id, reply_markup=reply_markup)
+                            reply_to_message_id=reply_to_message_id, reply_markup=reply_markup, parse_mode=parse_mode)
 
     def forwardMessage(self, chat_id, from_chat_id, message_id):
         self.__send_message("forwardMessage", chat_id=chat_id, from_chat_id=from_chat_id, message_id=message_id)
