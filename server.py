@@ -70,6 +70,7 @@ class WebHookServer(stoppable_thread.StoppableThread):
         self.key = None
         self.url = None
         self.httpd = None
+        self.thread_webhook_setter = None
 
     def run(self):
         try:
@@ -92,8 +93,8 @@ class WebHookServer(stoppable_thread.StoppableThread):
                                                 keyfile=self.__private_path,
                                                 ssl_version=ssl_version)
 
-            thread = WebHookSetter(self.Bot, self.url, self.__public_path)
-            thread.start()
+            self.thread_webhook_setter = WebHookSetter(self.Bot, self.url, self.__public_path)
+            self.thread_webhook_setter.start()
             self.httpd.serve_forever()
         except:
             self.logger.exception("Server fail", exc_info=True)
@@ -102,6 +103,12 @@ class WebHookServer(stoppable_thread.StoppableThread):
     def stop(self):
         super(WebHookServer, self).stop()
         self.httpd.shutdown()
+        self.httpd.socket.close()
+
+    def join(self, timeout=None):
+        if self.thread_webhook_setter is not None:
+            self.thread_webhook_setter.join()
+        super(WebHookServer, self).join(timeout)
 
 
 class WebHookSetter(threading.Thread):

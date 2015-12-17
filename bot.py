@@ -55,6 +55,7 @@ class Bot(stoppable_thread.StoppableThread):
     def stop(self):
         self.logger.info("Stopping")
         super(Bot, self).stop()
+        self.queue.put_nowait(None)
         self.logger.info("Stopped")
 
     def run(self):
@@ -63,9 +64,12 @@ class Bot(stoppable_thread.StoppableThread):
         while self.can_loop():
             try:
                 self.logger.debug("Geting in queue")
-                update = self.queue.get(timeout=15)
-                self.logger.debug("Get in queue")
-                self.__process_update(update)
+                update = self.queue.get()
+                if update is not None:
+                    self.logger.debug("Get in queue")
+                    self.__process_update(update)
+                else:
+                    self.logger.debug("Get empty in queue")
             except queue.Empty:
                 self.logger.debug("Queue empty")
         self.logger.info("Stopping modules")
