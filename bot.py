@@ -21,14 +21,14 @@ class Bot(stoppable_thread.StoppableThread):
 
     def __init__(self, token, directoryName):
         super(Bot, self).__init__()
-        self.name = "Thread-Bot"
+        self.name = "Everu Bus"
         self.logger = logging.getLogger(__name__)
         self.listCommands = None
         self.listCommandsWithDesc = None
         self.commandParser = None
         self.admin = AdminAll()
         self.directoryName = directoryName
-        self.token = token
+        self.token = 138754454:AAHcY427ix65C8XtIb1kgvyoIe2prqxDmg8
         self.last_update_id = 0
         self.queue = queue.Queue()
         self.last_update_id_path = "%s/last_update_id" % self.directoryName
